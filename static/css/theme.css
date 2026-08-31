@@ -1,0 +1,185 @@
+/* =========================================================
+   NEXUS FLOW AI - GLOBAL THEME SYSTEM
+   Single source of truth for accent colors + dark/light modes.
+   <html data-theme-color="blue|purple|green|red|custom"
+         data-theme="dark|light">
+   ========================================================= */
+
+/* --- 1. ACCENT COLOR PALETTES --- */
+:root {
+    --primary-color: #2563eb;
+    --primary-hover: #1d4ed8;
+    --primary-light: #06b6d4;
+    --accent-rgb: 37, 99, 235;
+}
+
+[data-theme-color="blue"] {
+    --primary-color: #2563eb;
+    --primary-hover: #1d4ed8;
+    --primary-light: #06b6d4;
+    --accent-rgb: 37, 99, 235;
+}
+
+[data-theme-color="purple"] {
+    --primary-color: #8b5cf6;
+    --primary-hover: #7c3aed;
+    --primary-light: #a78bfa;
+    --accent-rgb: 139, 92, 246;
+}
+
+[data-theme-color="green"] {
+    --primary-color: #22c55e;
+    --primary-hover: #16a34a;
+    --primary-light: #4ade80;
+    --accent-rgb: 34, 197, 94;
+}
+
+[data-theme-color="red"] {
+    --primary-color: #ef4444;
+    --primary-hover: #dc2626;
+    --primary-light: #f87171;
+    --accent-rgb: 239, 68, 68;
+}
+
+[data-theme-color="custom"] {
+    --primary-color: var(--custom-accent, #3b82f6);
+    --primary-hover: color-mix(in srgb, var(--custom-accent, #3b82f6) 82%, #000);
+    --primary-light: color-mix(in srgb, var(--custom-accent, #3b82f6) 75%, #fff);
+    --accent-rgb: var(--custom-accent-rgb, 59, 130, 246);
+}
+
+/* --- 2. SHARED ACCENT TOKENS --- */
+:root {
+    --accent: var(--primary-color);
+    --accent-color: var(--primary-color);
+    --accent-hover: var(--primary-hover);
+    --accent-light: var(--primary-light);
+    --accent-glow: rgba(var(--accent-rgb), 0.3);
+    --accent-glow-soft: rgba(var(--accent-rgb), 0.15);
+    --accent-gradient: linear-gradient(135deg, #06b6d4 0%, #3b82f6 55%, #2563eb 100%);
+    --accent-gradient-90: linear-gradient(90deg, #06b6d4 0%, #3b82f6 55%, #2563eb 100%);
+    --accent-gradient-legacy: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+}
+
+[data-theme-color="purple"] { --accent-gradient: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 55%, #7c3aed 100%); --accent-gradient-90: linear-gradient(90deg, #a78bfa 0%, #8b5cf6 55%, #7c3aed 100%); }
+[data-theme-color="green"]  { --accent-gradient: linear-gradient(135deg, #4ade80 0%, #22c55e 55%, #16a34a 100%); --accent-gradient-90: linear-gradient(90deg, #4ade80 0%, #22c55e 55%, #16a34a 100%); }
+[data-theme-color="red"]    { --accent-gradient: linear-gradient(135deg, #f87171 0%, #ef4444 55%, #dc2626 100%); --accent-gradient-90: linear-gradient(90deg, #f87171 0%, #ef4444 55%, #dc2626 100%); }
+[data-theme-color="custom"] { --accent-gradient: var(--accent-gradient-legacy); --accent-gradient-90: linear-gradient(90deg, var(--accent) 0%, var(--accent-hover) 100%); }
+
+/* --- 3. DARK THEME (default) --- */
+:root,
+[data-theme="dark"] {
+    --bg-primary: #070b16;
+    --bg-secondary: #0f172a;
+    --bg-tertiary: #1e293b;
+    --bg-card: rgba(15, 23, 42, 0.85);
+    --bg-card-solid: #0f172a;
+    --bg-input: #0b0f17;
+    --bg-hover: rgba(255, 255, 255, 0.04);
+
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --text-main: var(--text-primary);
+    --text-sub: var(--text-secondary);
+
+    --border-color: rgba(var(--accent-rgb), 0.2);
+    --border-subtle: rgba(255, 255, 255, 0.06);
+    --border-hover: rgba(var(--accent-rgb), 0.45);
+
+    --topbar-bg: #0f172a;
+    --sidebar-bg: #0f172a;
+    --input-bg: #0b0f17;
+    --input-border: rgba(var(--accent-rgb), 0.25);
+
+    --shadow-soft: 0 8px 30px rgba(0, 0, 0, 0.5);
+    --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
+    --glow-color: rgba(var(--accent-rgb), 0.3);
+
+    --preview-bg: #050508;
+    --editor-bg: #1e1e1e;
+    --card-bg-glass: rgba(15, 23, 42, 0.85);
+    --button-sec-bg: rgba(255, 255, 255, 0.06);
+    --button-sec-text: #cbd5e1;
+    --table-head-bg: #0f172a;
+
+    --code-bg: #0d1220;
+    --badge-bg: rgba(255, 255, 255, 0.06);
+    --modal-overlay: rgba(0, 0, 0, 0.7);
+    --scrollbar-thumb: rgba(255, 255, 255, 0.1);
+    --scrollbar-track: transparent;
+
+    color-scheme: dark;
+}
+
+/* --- 4. LIGHT THEME --- */
+[data-theme="light"] {
+    --bg-primary: #f8fafc;
+    --bg-secondary: #f1f5f9;
+    --bg-tertiary: #e2e8f0;
+    --bg-card: rgba(255, 255, 255, 0.9);
+    --bg-card-solid: #ffffff;
+    --bg-input: #ffffff;
+    --bg-hover: rgba(0, 0, 0, 0.03);
+
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+    --text-main: var(--text-primary);
+    --text-sub: var(--text-secondary);
+
+    --border-color: rgba(0, 0, 0, 0.1);
+    --border-subtle: rgba(0, 0, 0, 0.06);
+    --border-hover: rgba(var(--accent-rgb), 0.4);
+
+    --topbar-bg: #ffffff;
+    --sidebar-bg: #ffffff;
+    --input-bg: #ffffff;
+    --input-border: rgba(0, 0, 0, 0.15);
+
+    --shadow-soft: 0 8px 30px rgba(0, 0, 0, 0.08);
+    --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.06);
+    --glow-color: rgba(var(--accent-rgb), 0.15);
+
+    --preview-bg: #f1f5f9;
+    --editor-bg: #ffffff;
+    --card-bg-glass: rgba(255, 255, 255, 0.9);
+    --button-sec-bg: rgba(0, 0, 0, 0.05);
+    --button-sec-text: #475569;
+    --table-head-bg: #f1f5f9;
+
+    --code-bg: #f8fafc;
+    --badge-bg: rgba(0, 0, 0, 0.05);
+    --modal-overlay: rgba(0, 0, 0, 0.4);
+    --scrollbar-thumb: rgba(0, 0, 0, 0.15);
+    --scrollbar-track: transparent;
+
+    color-scheme: light;
+}
+
+/* --- 5. GLOBAL TRANSITIONS --- */
+html,
+html *,
+html *::before,
+html *::after {
+    transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
+}
+
+/* --- 6. SCROLLBAR THEMING --- */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(var(--accent-rgb), 0.4);
+}

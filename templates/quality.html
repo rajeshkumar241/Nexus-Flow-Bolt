@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% set active_page = 'quality' %}
+
+{% block title %}Code Quality | Nexus Flow{% endblock %}
+{% block page_title %}Code Quality{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/builder-v2.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/quality-page.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/live-website-preview.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="nb-shell nb-shell--full" id="nbQualityShell">
+
+    <!-- TOP BAR -->
+    <header class="nb-topbar">
+        <div class="nb-topbar-center">
+            <i class="fa-solid fa-shield-halved nb-proj-icon"></i>
+            <span class="nb-project-name" id="nbQualityProjectName">Code Quality</span>
+            <span class="nb-quality-project-badge" id="nbQualityProjectBadge">No project loaded</span>
+        </div>
+        <div class="nb-topbar-actions">
+            <a href="/builder" class="nb-btn nb-btn-ghost" title="Back to Builder">
+                <i class="fa-solid fa-wand-magic-sparkles"></i><span>Builder</span>
+            </a>
+            <a href="/code" class="nb-btn nb-btn-ghost" title="Code Editor">
+                <i class="fa-solid fa-code"></i><span>Code</span>
+            </a>
+            <button id="nbQualityAnalyzeBtn" class="nb-btn nb-btn-primary" title="Analyze code quality">
+                <i class="fa-solid fa-microscope"></i><span>Analyze</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT: Two-column layout -->
+    <div class="nb-quality-body">
+
+        <!-- LEFT: Quality Dashboard -->
+        <div class="nb-quality-dashboard">
+
+            <!-- Summary Row -->
+            <div class="nb-quality-summary-row">
+            <div class="nb-quality-score-card">
+                <div class="nb-quality-score-ring">
+                    <svg viewBox="0 0 120 120" class="nb-quality-ring-svg">
+                        <circle cx="60" cy="60" r="54" class="nb-quality-ring-bg"/>
+                        <circle cx="60" cy="60" r="54" class="nb-quality-ring-fill" id="nbQualityRingFill"/>
+                    </svg>
+                    <div class="nb-quality-score-inner">
+                        <div class="nb-quality-score" id="nbQualityScore">--</div>
+                        <div class="nb-quality-level" id="nbQualityLevel">Not analyzed</div>
+                    </div>
+                </div>
+                <div class="nb-quality-conf" id="nbQualityConf"></div>
+            </div>
+
+            <div class="nb-quality-model-card">
+                <div class="nb-quality-model-label">ML Model</div>
+                <div class="nb-quality-model-name" id="nbQualityModelName">Random Forest</div>
+                <div class="nb-quality-model-status" id="nbQualityModelStatus">Ready</div>
+            </div>
+
+            <div class="nb-quality-sections-card">
+                <div class="nb-quality-sections-label">Quality Sections</div>
+                <div class="nb-quality-sections-grid" id="nbQualitySections">
+                    <div class="nb-q-section nb-q-section-pending">
+                        <i class="fa-solid fa-minus-circle"></i>
+                        <span>HTML</span>
+                    </div>
+                    <div class="nb-q-section nb-q-section-pending">
+                        <i class="fa-solid fa-minus-circle"></i>
+                        <span>CSS</span>
+                    </div>
+                    <div class="nb-q-section nb-q-section-pending">
+                        <i class="fa-solid fa-minus-circle"></i>
+                        <span>JavaScript</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nb-quality-actions-card">
+                <button id="nbQualityImproveBtn" class="nb-btn nb-btn-primary nb-quality-improve-btn" disabled>
+                    <i class="fa-solid fa-wand-magic-sparkles"></i><span>Improve with AI</span>
+                </button>
+                <select id="nbQualityFocus" class="nb-quality-focus" title="Focus area">
+                    <option value="">All quality issues</option>
+                    <option value="accessibility">Accessibility</option>
+                    <option value="semantics">Semantics / SEO</option>
+                    <option value="performance">Performance</option>
+                    <option value="maintainability">Maintainability</option>
+                    <option value="best practices">Best practices</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Comparison (shown after AI improvement) -->
+        <div id="nbQualityCompare" class="nb-quality-compare" style="display:none;"></div>
+
+        <!-- Issues List -->
+        <div class="nb-quality-issues-section">
+            <div class="nb-quality-issues-head">
+                <i class="fa-solid fa-list-check"></i> Detected Issues
+                <span class="nb-quality-issue-count" id="nbQualityIssueCount"></span>
+            </div>
+            <div id="nbQualityIssues" class="nb-quality-issues">
+                <div class="nb-quality-empty">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <p>Run an analysis to see detected issues.</p>
+                </div>
+            </div>
+        </div>
+
+        <p id="nbQualityMeta" class="nb-quality-meta"></p>
+
+        </div><!-- end nb-quality-dashboard -->
+
+        <!-- RIGHT: Live Preview -->
+        <div class="nb-quality-preview" id="nbQualityPreviewContainer">
+        </div>
+
+    </div><!-- end nb-quality-body -->
+</div>
+
+<div id="nbToast" class="nb-toast"><i class="fa-solid fa-circle-check"></i><span id="nbToastMsg"></span></div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    window.__INITIAL_PROJECT_ID = "{{ initial_project_id or '' }}";
+</script>
+<script src="{{ url_for('static', filename='js/preview-store.js') }}"></script>
+<script src="{{ url_for('static', filename='js/live-website-preview.js') }}"></script>
+<script src="{{ url_for('static', filename='js/quality-page.js') }}"></script>
+{% endblock %}

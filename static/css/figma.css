@@ -1,0 +1,210 @@
+/* =========================================================
+   NEXUS FLOW - FIGMA INTEGRATION STYLES
+   Figma OAuth connection, import modal, and design analysis.
+   ========================================================= */
+
+/* ── Integration Card ─────────────────────────────────────── */
+.nx-integration-figma {
+    background: linear-gradient(135deg, #2c2c2c, #1e1e1e);
+    color: #a259ff;
+}
+
+/* ── Figma Import Modal ───────────────────────────────────── */
+.nb-figma-modal {
+    max-width: 560px;
+    width: 90%;
+}
+
+.nb-figma-desc {
+    color: var(--nb-text-muted);
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+    line-height: 1.5;
+}
+
+.nb-figma-url-input {
+    margin-bottom: 0.75rem;
+}
+
+.nb-figma-url-input .nb-input {
+    width: 100%;
+    padding: 10px 14px;
+    background: var(--nb-panel-2);
+    border: 1px solid var(--nb-border);
+    border-radius: var(--nb-radius-sm);
+    color: var(--nb-text);
+    font-size: 0.85rem;
+    font-family: 'Consolas', 'Courier New', monospace;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.nb-figma-url-input .nb-input:focus {
+    border-color: #a259ff;
+}
+
+.nb-figma-warning {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 10px 14px;
+    background: rgba(251, 191, 36, 0.1);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    border-radius: var(--nb-radius-sm);
+    color: #fbbf24;
+    font-size: 0.82rem;
+    margin-bottom: 0.75rem;
+}
+
+.nb-figma-warning a {
+    color: #a259ff;
+    text-decoration: underline;
+}
+
+.nb-figma-analyze-btn {
+    width: 100%;
+    justify-content: center;
+}
+
+.nb-figma-analyze-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ── Loading State ────────────────────────────────────────── */
+.nb-figma-loading {
+    text-align: center;
+    padding: 2rem;
+    color: var(--nb-text-muted);
+}
+
+.nb-figma-loading i {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+    color: #a259ff;
+    display: block;
+}
+
+/* ── Result Step ──────────────────────────────────────────── */
+.nb-figma-result-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--nb-border);
+}
+
+.nb-figma-success-icon {
+    font-size: 1.5rem;
+    color: #22c55e;
+}
+
+.nb-figma-result-header h4 {
+    margin: 0;
+    font-size: 1rem;
+    color: var(--nb-text);
+}
+
+.nb-figma-meta {
+    margin: 2px 0 0;
+    font-size: 0.78rem;
+    color: var(--nb-text-muted);
+}
+
+.nb-figma-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+}
+
+.nb-figma-detail-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 8px 12px;
+    background: rgba(15, 23, 42, 0.4);
+    border-radius: var(--nb-radius-sm);
+    border: 1px solid var(--nb-border);
+}
+
+.nb-figma-label {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-width: 120px;
+    font-size: 0.78rem;
+    color: var(--nb-text-muted);
+    font-weight: 500;
+}
+
+.nb-figma-label i {
+    width: 14px;
+    text-align: center;
+    color: #a259ff;
+}
+
+.nb-figma-value {
+    font-size: 0.82rem;
+    color: var(--nb-text);
+}
+
+.nb-figma-colors {
+    display: flex;
+    gap: 4px;
+}
+
+.nb-figma-color-swatch {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid var(--nb-border);
+    display: inline-block;
+}
+
+.nb-figma-name-input {
+    margin-bottom: 1rem;
+}
+
+.nb-figma-name-input label {
+    display: block;
+    font-size: 0.78rem;
+    color: var(--nb-text-muted);
+    margin-bottom: 4px;
+    font-weight: 500;
+}
+
+.nb-figma-name-input .nb-input {
+    width: 100%;
+    padding: 10px 14px;
+    background: var(--nb-panel-2);
+    border: 1px solid var(--nb-border);
+    border-radius: var(--nb-radius-sm);
+    color: var(--nb-text);
+    font-size: 0.85rem;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.nb-figma-name-input .nb-input:focus {
+    border-color: #a259ff;
+}
+
+.nb-figma-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+/* ── Figma Chip in Builder ────────────────────────────────── */
+.nb-chip-figma {
+    background: rgba(162, 89, 255, 0.15);
+    border-color: rgba(162, 89, 255, 0.35);
+    color: #a259ff;
+}
+
+.nb-chip-figma:hover {
+    background: rgba(162, 89, 255, 0.25);
+    border-color: #a259ff;
+}

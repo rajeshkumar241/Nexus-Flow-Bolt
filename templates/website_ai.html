@@ -1,0 +1,231 @@
+{% extends "base.html" %}
+{% set active_page = 'website-ai' %}
+
+{% block title %}Website Modifier AI | Nexus Flow{% endblock %}
+{% block page_title %}Website Modifier AI{% endblock %}
+
+{% block extra_css %}
+<link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/builder.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="builder-main">
+
+    <!-- =========================================================
+         WORKSPACE TABS
+         ========================================================= -->
+    <div class="workspace-tabs">
+        <button class="workspace-tab active" data-tab="preview"><i class="fa-solid fa-desktop"></i> Preview</button>
+        <button class="workspace-tab" data-tab="code"><i class="fa-solid fa-code"></i> Code</button>
+        <button class="workspace-tab" data-tab="chat"><i class="fa-solid fa-comments"></i> AI Chat</button>
+    </div>
+
+    <!-- =========================================================
+         PREVIEW TAB
+         ========================================================= -->
+    <div class="workspace-tab-content active" data-content="preview">
+        <div class="preview-toolbar">
+            <div class="device-switcher">
+                <button class="device-btn active" data-device="desktop"><i class="fa-solid fa-desktop"></i> Desktop</button>
+                <button class="device-btn" data-device="tablet"><i class="fa-solid fa-tablet-screen-button"></i> Tablet</button>
+                <button class="device-btn" data-device="mobile"><i class="fa-solid fa-mobile-screen-button"></i> Mobile</button>
+            </div>
+            <div class="preview-actions">
+                <button id="refreshPreviewBtn" class="btn-toolbar"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
+                <button id="newTabPreviewBtn" class="btn-toolbar"><i class="fa-solid fa-arrow-up-right-from-square"></i> New Tab</button>
+            </div>
+        </div>
+        <div id="previewFrameShell" class="preview-frame-shell">
+            <iframe id="previewFrame" title="Website preview"
+                    sandbox="allow-scripts allow-forms allow-popups allow-modals allow-downloads allow-presentation"></iframe>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         CODE TAB
+         ========================================================= -->
+    <div class="workspace-tab-content" data-content="code">
+        <div class="code-preview-layout">
+            <div class="code-file-tabs">
+                <button class="code-file-tab active" data-file="html"><i class="fa-brands fa-html5 file-icon-html"></i> index.html</button>
+                <button class="code-file-tab" data-file="css"><i class="fa-brands fa-css3-alt file-icon-css"></i> style.css</button>
+                <button class="code-file-tab" data-file="js"><i class="fa-brands fa-js file-icon-js"></i> script.js</button>
+            </div>
+
+            <div class="vscode-editor">
+                <div class="vscode-title-bar">
+                    <div class="vscode-dots">
+                        <span class="dot dot-red"></span>
+                        <span class="dot dot-yellow"></span>
+                        <span class="dot dot-green"></span>
+                    </div>
+                    <div class="vscode-title">index.html — Nexus Flow AI Code Studio</div>
+                    <button id="codeFullscreenBtn" class="vscode-action-btn" title="Toggle fullscreen">
+                        <i class="fa-solid fa-expand"></i>
+                    </button>
+                </div>
+
+                <div class="vscode-body">
+                    <div class="vscode-explorer">
+                        <div class="explorer-header">
+                            <span>EXPLORER</span>
+                            <button id="refreshFilesBtn" class="explorer-action-btn" title="Refresh files">
+                                <i class="fa-solid fa-rotate"></i>
+                            </button>
+                        </div>
+                        <div class="explorer-search">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input id="codeSearchInput" type="text" placeholder="Search files..." spellcheck="false">
+                        </div>
+                        <div id="fileExplorerTree" class="explorer-tree"></div>
+                    </div>
+
+                    <div class="vscode-editor-area">
+                        <div class="editor-tabs" id="editorTabs"></div>
+                        <div class="editor-toolbar">
+                            <div class="editor-toolbar-left">
+                                <button id="explainCodeBtn" class="editor-btn"><i class="fa-solid fa-graduation-cap"></i> Explain Code</button>
+                                <button id="checkCodeBtn" class="editor-btn"><i class="fa-solid fa-shield-halved"></i> Check Quality</button>
+                            </div>
+                            <div class="editor-toolbar-right">
+                                <button id="copyCodeBtn" class="editor-btn"><i class="fa-regular fa-copy"></i> Copy</button>
+                                <button id="downloadFileBtn" class="editor-btn"><i class="fa-solid fa-download"></i> Download</button>
+                            </div>
+                        </div>
+
+                        <div class="editor-main">
+                            <div class="code-editor-wrapper">
+                                <pre class="code-line-numbers active" id="codeLineNumbersHtml"></pre>
+                                <textarea class="code-editor-textarea active" id="codeEditorHtml" spellcheck="false"></textarea>
+                                <pre class="code-line-numbers" id="codeLineNumbersCss"></pre>
+                                <textarea class="code-editor-textarea" id="codeEditorCss" spellcheck="false"></textarea>
+                                <pre class="code-line-numbers" id="codeLineNumbersJs"></pre>
+                                <textarea class="code-editor-textarea" id="codeEditorJs" spellcheck="false"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="vscode-statusbar">
+                            <span><i class="fa-solid fa-check-circle"></i> Nexus Flow</span>
+                            <span><i class="fa-solid fa-code-branch"></i> main</span>
+                            <span><i class="fa-solid fa-language"></i> HTML</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="codeAnalysisResult" class="code-analysis-result" style="display:none;"></div>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         AI CHAT TAB
+         ========================================================= -->
+    <div class="workspace-tab-content" data-content="chat">
+        <div class="aichat-layout">
+            <div class="aichat-header">
+                <h3><i class="fa-solid fa-robot"></i> Website Modifier AI</h3>
+                <p>Ask me to change your generated website — colors, sections, pages, or functionality.</p>
+            </div>
+            <div id="aiChatHistory" class="ai-chat-history modifier-chat-history"></div>
+            <div class="ai-chat-input-area">
+                <textarea id="aiChatInput" class="ai-chat-textarea" rows="2"
+                          placeholder="e.g. Add dark mode, change the hero background, or add a contact form..."></textarea>
+                <button id="aiChatSendBtn" class="btn-send" title="Send (Ctrl+Enter)">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- =========================================================
+     TOASTS
+     ========================================================= -->
+<div id="saveToast" class="save-toast"><i class="fa-solid fa-circle-check"></i><span>Success</span></div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    window.__nexusCurrentState = {{ state | tojson }};
+</script>
+<script>
+    (function () {
+        document.addEventListener('DOMContentLoaded', function () {
+            var st = window.__nexusCurrentState || {};
+
+            // Workspace tab switching (Preview / Code / AI Chat)
+            var tabs = document.querySelectorAll('.workspace-tab');
+            var contents = document.querySelectorAll('.workspace-tab-content');
+            tabs.forEach(function (tab) {
+                tab.addEventListener('click', function () {
+                    tabs.forEach(function (t) { t.classList.remove('active'); });
+                    contents.forEach(function (c) { c.classList.remove('active'); });
+                    tab.classList.add('active');
+                    var target = tab.getAttribute('data-tab');
+                    var content = document.querySelector('.workspace-tab-content[data-content="' + target + '"]');
+                    if (content) content.classList.add('active');
+                    if (target === 'preview') renderPreview();
+                });
+            });
+
+            // Device switcher
+            var deviceBtns = document.querySelectorAll('.device-btn');
+            var shell = document.getElementById('previewFrameShell');
+            deviceBtns.forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    deviceBtns.forEach(function (b) { b.classList.remove('active'); });
+                    btn.classList.add('active');
+                    var device = btn.getAttribute('data-device');
+                    shell.classList.remove('desktop', 'tablet', 'mobile');
+                    shell.classList.add(device);
+                });
+            });
+
+            // Preview rendering from state
+            window.renderPreview = function () {
+                var frame = document.getElementById('previewFrame');
+                var s = window.__nexusCurrentState || {};
+                var html = s.html || '';
+                var css = s.css || '';
+                var js = s.javascript || '';
+                if (!frame) return;
+                if (!html && !css && !js) {
+                    frame.srcdoc = '<!DOCTYPE html><html><head><title>Preview</title></head><body style="font-family:sans-serif;background:#090d16;color:#94a3b8;display:grid;place-items:center;height:100vh;margin:0;"><p>No website generated yet. Use the AI Chat tab to create one.</p></body></html>';
+                    return;
+                }
+                frame.srcdoc = '<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><style>' + (css || '') + '</style></head><body>' + (html || '') + '<script>' + (js || '') + '<\/script></body></html>';
+            };
+
+            // Seed editors with the current state
+            document.dispatchEvent(new CustomEvent('websiteGenerated', {
+                detail: {
+                    html: st.html || '',
+                    css: st.css || '',
+                    javascript: st.javascript || '',
+                    project_id: st.project_id || '',
+                    files: st.files || null
+                }
+            }));
+
+            renderPreview();
+
+            // Refresh / New Tab preview buttons
+            var refreshBtn = document.getElementById('refreshPreviewBtn');
+            if (refreshBtn) refreshBtn.addEventListener('click', renderPreview);
+            var newTabBtn = document.getElementById('newTabPreviewBtn');
+            if (newTabBtn) newTabBtn.addEventListener('click', function () {
+                var s = window.__nexusCurrentState || {};
+                var win = window.open('', '_blank');
+                if (win) {
+                    win.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><style>' + (s.css || '') + '</style></head><body>' + (s.html || '') + '<script>' + (s.javascript || '') + '<\/script></body></html>');
+                    win.document.close();
+                }
+            });
+        });
+    })();
+</script>
+<script src="{{ url_for('static', filename='js/ai-builder.js') }}"></script>
+{% endblock %}

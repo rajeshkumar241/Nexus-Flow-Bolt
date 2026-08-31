@@ -1,0 +1,274 @@
+{% extends "base.html" %}
+{% set active_page = 'profile' %}
+
+{% block title %}User Profile | Nexus Flow AI{% endblock %}
+{% block page_title %}Profile{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="profile-page">
+
+    <!-- =========================================================
+         PROFILE HEADER CARD
+         Left: avatar + identity · Right: stat cards
+         ========================================================= -->
+    <section class="profile-header-card profile-fade-in">
+        <div class="profile-header-glow"></div>
+
+        <div class="profile-identity">
+            <!-- Profile image + upload form (AJAX upload handled in profile.js) -->
+            <form action="{{ url_for('profile_upload_image') }}"
+                  method="POST"
+                  enctype="multipart/form-data"
+                  id="profileForm"
+                  class="profile-avatar-form">
+                <div class="profile-avatar profile-avatar-wrap">
+                    <div class="profile-avatar-ring">
+                        <div class="profile-avatar-img">
+                            <img id="profilePreview"
+                                 src="{% if profile_image_url(user) %}
+                                         {{ profile_image_url(user) }}
+                                       {% else %}
+                                         {{ url_for('static', filename='images/profile-icon.png') }}
+                                       {% endif %}"
+                                 alt="Profile Photo">
+                        </div>
+                    </div>
+
+                    <div class="camera-edit-btn" onclick="toggleMenu()" title="Edit Profile Photo">
+                        <i class="fa-solid fa-camera"></i>
+                    </div>
+
+                    <div class="upload-popup" id="uploadPopup">
+                        <button type="button" class="upload-popup-option" onclick="uploadPhoto()">
+                            <i class="fa-solid fa-upload"></i> Upload Photo
+                        </button>
+                        <button type="button" class="upload-popup-option upload-popup-option-danger" onclick="removeProfilePhoto()">
+                            <i class="fa-solid fa-trash-can"></i> Remove Profile Picture
+                        </button>
+                    </div>
+                </div>
+                <input type="file" id="profileInput" name="profile" accept="image/*" hidden>
+            </form>
+
+            <!-- Identity -->
+            <div class="profile-identity-info">
+                <h2 class="profile-user-name">{{ (user.get('fullname') if user else None) or 'Nexus User' }}</h2>
+                <p class="profile-user-email"><i class="fa-regular fa-envelope"></i> {{ user.get('email') if user else 'unknown@example.com' }}</p>
+                <div class="profile-user-badges">
+                    <span class="profile-badge"><i class="fa-solid fa-id-badge"></i> {{ (user.get('designation') if user else None) or (user.get('role') if user else None) or 'AI Web Developer' }}</span>
+                    <span class="profile-status-badge"><span class="pulse-dot"></span> Verified Active</span>
+                </div>
+                {% if user and user.get('bio') %}
+                    <p class="profile-user-bio"><i class="fa-solid fa-quote-left"></i> {{ user.get('bio') }}</p>
+                {% else %}
+                    <p class="profile-user-bio"><i class="fa-solid fa-circle-info"></i> Full-Stack Web Developer &amp; AI Prompt Creator on Nexus Flow.</p>
+                {% endif %}
+
+                </div>
+        </div>
+
+        <!-- Statistics (real data from the profile route) -->
+        <div class="profile-stats">
+            <div class="profile-stat-card">
+                <div class="profile-stat-icon purple"><i class="fa-solid fa-folder"></i></div>
+                <div class="profile-stat-meta">
+                    <span class="profile-stat-num">{{ total_projects or 0 }}</span>
+                    <span class="profile-stat-label">Projects</span>
+                    <span class="profile-stat-desc">Total</span>
+                </div>
+            </div>
+            <div class="profile-stat-card">
+                <div class="profile-stat-icon blue"><i class="fa-solid fa-box-archive"></i></div>
+                <div class="profile-stat-meta">
+                    <span class="profile-stat-num">{{ total_downloads or 0 }}</span>
+                    <span class="profile-stat-label">Exports</span>
+                    <span class="profile-stat-desc">Downloaded</span>
+                </div>
+            </div>
+            <div class="profile-stat-card">
+                <div class="profile-stat-icon green"><i class="fa-solid fa-comments"></i></div>
+                <div class="profile-stat-meta">
+                    <span class="profile-stat-num">{{ total_chats or 0 }}</span>
+                    <span class="profile-stat-label">AI Chats</span>
+                    <span class="profile-stat-desc">Conversations</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- =========================================================
+         PERSONAL INFORMATION
+         ========================================================= -->
+    <section class="glass-card profile-section profile-fade-in">
+        <div class="profile-section-head">
+            <div class="glass-card-title">
+                <h3><i class="fa-solid fa-user-gear"></i> Personal Information</h3>
+                <span>Your account details</span>
+            </div>
+            <a href="/settings" class="btn-card btn-primary-solid profile-edit-btn">
+                <i class="fa-solid fa-pen-to-square"></i> Edit Profile
+            </a>
+        </div>
+
+        <div class="profile-info-grid">
+            <div class="profile-field">
+                <label class="profile-field-label"><i class="fa-regular fa-user"></i> Full Name</label>
+                <div class="profile-field-value">{{ (user.get('fullname') if user else None) or 'Not specified' }}</div>
+            </div>
+            <div class="profile-field">
+                <label class="profile-field-label"><i class="fa-regular fa-envelope"></i> Email Address</label>
+                <div class="profile-field-value">{{ user.get('email') if user else 'Not specified' }}</div>
+            </div>
+            <div class="profile-field">
+                <label class="profile-field-label"><i class="fa-solid fa-phone"></i> Phone Number</label>
+                <div class="profile-field-value">{{ (user.get('phone') if user else None) or 'Not specified' }}</div>
+            </div>
+            <div class="profile-field">
+                <label class="profile-field-label"><i class="fa-solid fa-cake-candles"></i> Date of Birth</label>
+                <div class="profile-field-value">{{ (user.get('dob') if user else None) or (user.get('date_of_birth') if user else None) or 'Not specified' }}</div>
+            </div>
+            <div class="profile-field">
+                <label class="profile-field-label"><i class="fa-solid fa-briefcase"></i> Designation</label>
+                <div class="profile-field-value">{{ (user.get('designation') if user else None) or (user.get('role') if user else None) or 'AI Web Developer' }}</div>
+            </div>
+            <div class="profile-field">
+                <label class="profile-field-label"><i class="fa-solid fa-location-dot"></i> Location</label>
+                <div class="profile-field-value">{{ (user.get('location') if user else None) or 'Not specified' }}</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- =========================================================
+         TWO-COLUMN CONTENT: Activity · Recent Projects
+         ========================================================= -->
+    <div class="profile-content-grid profile-fade-in">
+
+        <!-- Recent Activity Timeline -->
+        <div class="profile-col">
+            <div class="glass-card">
+                <div class="glass-card-header">
+                    <div class="glass-card-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
+                    <div class="glass-card-title">
+                        <h3>Recent Activity</h3>
+                        <span>Your latest actions</span>
+                    </div>
+                </div>
+                <div class="activity-timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-icon purple"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                        <div class="timeline-content">
+                            <h4>AI Prompt Execution</h4>
+                            <p>Generated responsive web code using the Gemini 2.5 Flash engine.</p>
+                            <span class="timeline-time">Just now</span>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-icon blue"><i class="fa-solid fa-download"></i></div>
+                        <div class="timeline-content">
+                            <h4>ZIP Archive Export</h4>
+                            <p>Exported project codebase with index.html, style.css, and script.js.</p>
+                            <span class="timeline-time">Earlier today</span>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-icon accent"><i class="fa-solid fa-sliders"></i></div>
+                        <div class="timeline-content">
+                            <h4>Preferences Updated</h4>
+                            <p>Configured dark theme &amp; accent color preferences in Settings.</p>
+                            <span class="timeline-time">Yesterday</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Projects -->
+        <div class="profile-col">
+            <div class="glass-card">
+                <div class="glass-card-header">
+                    <div class="glass-card-icon"><i class="fa-solid fa-folder-open"></i></div>
+                    <div class="glass-card-title">
+                        <h3>Recent Projects</h3>
+                        <span>Your latest creations</span>
+                    </div>
+                    <a href="/projects" class="glass-card-link">View All ({{ total_projects or 0 }})</a>
+                </div>
+
+                {% if projects and projects|length > 0 %}
+                    <div class="projects-list">
+                        {% for p in projects %}
+                        {% if p %}
+                        <div class="project-mini-card">
+                            <div class="project-mini-icon"><i class="fa-solid fa-code"></i></div>
+                            <div class="project-mini-info">
+                                <h4>{{ p.get('title') or 'Untitled Project' }}</h4>
+                                {% set _prompt = p.get('prompt') or '' %}
+                                <p class="project-prompt-preview">{{ _prompt[:50] }}{% if _prompt|length > 50 %}...{% endif %}</p>
+                                <span class="project-date"><i class="fa-regular fa-clock"></i> Updated {{ p.get('created_at_fmt') or 'Recently' }}</span>
+                            </div>
+                            <a href="/builder?project_id={{ p.get('_id_str') or '' }}" class="btn-mini-open" title="Open in Builder">
+                                <i class="fa-solid fa-arrow-right-long"></i>
+                            </a>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-projects-state">
+                        <i class="fa-solid fa-cubes-stacked"></i>
+                        <p>No projects generated yet.</p>
+                        <a href="/builder" class="btn-card btn-primary-solid btn-create-first">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z"/></svg>
+                            Create Your First AI Website
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+
+    <!-- =========================================================
+         WORKSPACE SHORTCUTS
+         ========================================================= -->
+    <section class="glass-card profile-fade-in">
+        <div class="glass-card-header">
+            <div class="glass-card-icon"><i class="fa-solid fa-compass"></i></div>
+            <div class="glass-card-title">
+                <h3>Workspace Shortcuts</h3>
+                <span>Quick access to tools</span>
+            </div>
+        </div>
+        <div class="shortcuts-grid">
+            <a href="/builder" class="shortcut-item">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <span>AI Builder</span>
+            </a>
+            <a href="/downloads" class="shortcut-item">
+                <i class="fa-solid fa-download"></i>
+                <span>Downloads</span>
+            </a>
+            <a href="/chat" class="shortcut-item">
+                <i class="fa-solid fa-comments"></i>
+                <span>AI Chat</span>
+            </a>
+        </div>
+    </section>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/profile.js') }}"></script>
+<script>
+    const profileInput = document.getElementById("profileInput");
+    if (profileInput) {
+        profileInput.addEventListener("change", onProfileFileSelected);
+    }
+</script>
+{% endblock %}

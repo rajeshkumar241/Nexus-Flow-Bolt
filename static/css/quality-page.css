@@ -1,0 +1,385 @@
+/* =========================================================
+   NEXUS FLOW - QUALITY PAGE STYLES
+   Dedicated code quality dashboard.
+   ========================================================= */
+
+.nb-shell--full {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 60px);
+    overflow: hidden;
+}
+
+.nb-quality-body {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+.nb-quality-dashboard {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem 2rem;
+    background: #09090b;
+}
+
+.nb-quality-preview {
+    flex: 1;
+    min-width: 0;
+    background: #09090b;
+    border-left: 1px solid rgba(255,255,255,0.06);
+}
+
+/* ── Summary Row ──────────────────────────────────────── */
+.nb-quality-summary-row {
+    display: grid;
+    grid-template-columns: auto auto 1fr auto;
+    gap: 1rem;
+    align-items: start;
+    margin-bottom: 1.5rem;
+}
+
+/* ── Score Card with Ring ─────────────────────────────── */
+.nb-quality-score-card {
+    background: rgba(24,24,27,0.6);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 1.25rem;
+    text-align: center;
+}
+
+.nb-quality-score-ring {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 0.5rem;
+}
+
+.nb-quality-ring-svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.nb-quality-ring-bg {
+    fill: none;
+    stroke: rgba(255,255,255,0.06);
+    stroke-width: 8;
+}
+
+.nb-quality-ring-fill {
+    fill: none;
+    stroke: #6366f1;
+    stroke-width: 8;
+    stroke-linecap: round;
+    stroke-dasharray: 339.292;
+    stroke-dashoffset: 339.292;
+    transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+                stroke 0.3s ease;
+}
+
+.nb-quality-score-inner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.nb-quality-score {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #e4e4e7;
+    line-height: 1;
+}
+
+.nb-quality-level {
+    font-size: 0.6875rem;
+    color: #a1a1aa;
+    margin-top: 0.25rem;
+}
+
+.nb-quality-conf {
+    font-size: 0.6875rem;
+    color: #52525b;
+}
+
+/* ── Model Card ───────────────────────────────────────── */
+.nb-quality-model-card {
+    background: rgba(24,24,27,0.6);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+}
+
+.nb-quality-model-label {
+    font-size: 0.6875rem;
+    color: #52525b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.375rem;
+}
+
+.nb-quality-model-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #e4e4e7;
+}
+
+.nb-quality-model-status {
+    font-size: 0.6875rem;
+    color: #22c55e;
+    margin-top: 0.25rem;
+}
+
+/* ── Sections Card ────────────────────────────────────── */
+.nb-quality-sections-card {
+    background: rgba(24,24,27,0.6);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+}
+
+.nb-quality-sections-label {
+    font-size: 0.6875rem;
+    color: #52525b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.625rem;
+}
+
+.nb-quality-sections-grid {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.nb-q-section {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.375rem 0.75rem;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.04);
+    color: #71717a;
+}
+
+.nb-q-section-pending i { color: #3f3f46; }
+.nb-q-section-good { border-color: rgba(34,197,94,0.2); color: #22c55e; }
+.nb-q-section-good i { color: #22c55e; }
+.nb-q-section-warn { border-color: rgba(234,179,8,0.2); color: #eab308; }
+.nb-q-section-warn i { color: #eab308; }
+.nb-q-section-bad { border-color: rgba(239,68,68,0.2); color: #ef4444; }
+.nb-q-section-bad i { color: #ef4444; }
+
+/* ── Actions Card ─────────────────────────────────────── */
+.nb-quality-actions-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.nb-quality-improve-btn {
+    white-space: nowrap;
+}
+
+.nb-quality-improve-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.nb-quality-focus {
+    background: rgba(24,24,27,0.6);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.75rem;
+    color: #a1a1aa;
+    appearance: none;
+    cursor: pointer;
+}
+
+.nb-quality-focus option {
+    background: #18181b;
+    color: #e4e4e7;
+}
+
+/* ── Issues Section ───────────────────────────────────── */
+.nb-quality-issues-section {
+    background: rgba(24,24,27,0.4);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.nb-quality-issues-head {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #e4e4e7;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.nb-quality-issue-count {
+    font-size: 0.6875rem;
+    font-weight: 400;
+    color: #71717a;
+    margin-left: auto;
+}
+
+.nb-quality-issues {
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 0.5rem;
+}
+
+.nb-quality-empty {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #52525b;
+}
+
+.nb-quality-empty i {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+    display: block;
+    color: #27272a;
+}
+
+.nb-quality-empty p {
+    font-size: 0.8125rem;
+    margin: 0;
+}
+
+.nb-quality-retry-btn {
+    margin-top: 10px;
+    font-size: 0.8rem;
+}
+
+/* ── Issue Item ───────────────────────────────────────── */
+.nb-issue {
+    display: flex;
+    align-items: start;
+    gap: 0.625rem;
+    padding: 0.625rem 0.75rem;
+    border-radius: 8px;
+    margin-bottom: 0.25rem;
+    transition: background 0.15s;
+}
+
+.nb-issue:hover {
+    background: rgba(255,255,255,0.02);
+}
+
+.nb-issue-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+    font-size: 0.625rem;
+}
+
+.nb-issue-error .nb-issue-icon { background: rgba(239,68,68,0.15); color: #ef4444; }
+.nb-issue-warning .nb-issue-icon { background: rgba(234,179,8,0.15); color: #eab308; }
+.nb-issue-info .nb-issue-icon { background: rgba(99,102,241,0.15); color: #6366f1; }
+
+.nb-issue-body { flex: 1; min-width: 0; }
+
+.nb-issue-msg {
+    font-size: 0.8125rem;
+    color: #e4e4e7;
+    line-height: 1.4;
+}
+
+.nb-issue-file {
+    font-size: 0.6875rem;
+    color: #52525b;
+    margin-top: 0.25rem;
+}
+
+.nb-issue-section {
+    display: inline-block;
+    font-size: 0.625rem;
+    padding: 0.0625rem 0.375rem;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.04);
+    color: #71717a;
+    margin-left: 0.375rem;
+}
+
+/* ── Comparison Card ──────────────────────────────────── */
+.nb-quality-compare {
+    background: rgba(24,24,27,0.4);
+    border: 1px solid rgba(99,102,241,0.2);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+.nb-quality-compare h4 {
+    font-size: 0.8125rem;
+    color: #e4e4e7;
+    margin: 0 0 0.75rem;
+}
+
+.nb-quality-compare pre {
+    background: #09090b;
+    border-radius: 8px;
+    padding: 0.75rem;
+    font-size: 0.75rem;
+    color: #a1a1aa;
+    overflow-x: auto;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+/* ── Meta ─────────────────────────────────────────────── */
+.nb-quality-meta {
+    font-size: 0.6875rem;
+    color: #3f3f46;
+    text-align: center;
+    margin-top: 1.5rem;
+    padding: 0 1rem;
+}
+
+/* ── Score Colors ─────────────────────────────────────── */
+.nb-q-high .nb-quality-score { color: #22c55e; }
+.nb-q-high .nb-quality-ring-fill { stroke: #22c55e; }
+.nb-q-medium .nb-quality-score { color: #eab308; }
+.nb-q-medium .nb-quality-ring-fill { stroke: #eab308; }
+.nb-q-low .nb-quality-score { color: #ef4444; }
+.nb-q-low .nb-quality-ring-fill { stroke: #ef4444; }
+
+/* ── Responsive ───────────────────────────────────────── */
+@media (max-width: 1024px) {
+    .nb-quality-body {
+        flex-direction: column;
+    }
+    .nb-quality-preview {
+        border-left: none;
+        border-top: 1px solid rgba(255,255,255,0.06);
+        min-height: 300px;
+    }
+    .nb-quality-summary-row {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .nb-quality-dashboard {
+        padding: 1rem;
+    }
+    .nb-quality-summary-row {
+        grid-template-columns: 1fr;
+    }
+}

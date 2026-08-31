@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" width="640" height="400">
+  <defs>
+    <linearGradient id="pageGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#064e3b"/>
+      <stop offset="1" stop-color="#0f766e"/>
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#22c55e" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#06b6d4" stop-opacity="0.25"/>
+    </linearGradient>
+    <linearGradient id="btnGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#22c55e"/>
+      <stop offset="1" stop-color="#06b6d4"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.3" r="0.7">
+      <stop offset="0" stop-color="#22c55e" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#22c55e" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="640" height="400" fill="url(#pageGrad)"/>
+  <rect width="640" height="400" fill="url(#glow)"/>
+  <!-- Browser chrome -->
+  <rect x="0" y="0" width="640" height="26" fill="#0b0f17"/>
+  <circle cx="16" cy="13" r="4" fill="#ff5f57"/>
+  <circle cx="30" cy="13" r="4" fill="#febc2e"/>
+  <circle cx="44" cy="13" r="4" fill="#28c840"/>
+  <rect x="60" y="7" width="300" height="12" rx="6" fill="rgba(255,255,255,0.08)"/>
+  <!-- Nav -->
+  <rect x="24" y="40" width="70" height="12" rx="6" fill="#22c55e"/>
+  <rect x="120" y="44" width="26" height="5" rx="2.5" fill="#cbd5e1" opacity="0.6"/>
+  <rect x="156" y="44" width="26" height="5" rx="2.5" fill="#cbd5e1" opacity="0.6"/>
+  <rect x="192" y="44" width="26" height="5" rx="2.5" fill="#cbd5e1" opacity="0.6"/>
+  <rect x="228" y="44" width="26" height="5" rx="2.5" fill="#cbd5e1" opacity="0.6"/>
+  <rect x="548" y="38" width="64" height="20" rx="10" fill="url(#btnGrad)"/>
+  <!-- Hero -->
+  <rect x="24" y="80" width="240" height="18" rx="9" fill="#f8fafc"/>
+  <rect x="24" y="108" width="320" height="18" rx="9" fill="#f8fafc" opacity="0.85"/>
+  <rect x="24" y="134" width="200" height="18" rx="9" fill="#f8fafc" opacity="0.6"/>
+  <rect x="24" y="166" width="150" height="30" rx="15" fill="url(#btnGrad)"/>
+  <rect x="190" y="172" width="60" height="18" rx="9" fill="none" stroke="#cbd5e1" stroke-opacity="0.4"/>
+  <rect x="24" y="212" width="90" height="8" rx="4" fill="#94a3b8" opacity="0.5"/>
+  <rect x="24" y="228" width="130" height="8" rx="4" fill="#94a3b8" opacity="0.3"/>
+  <rect x="24" y="250" width="150" height="96" rx="6" fill="url(#cardGrad)" opacity="0.55"/><rect x="32" y="258" width="134" height="8" rx="4" fill="#06b6d4" opacity="0.9"/><rect x="32" y="274" width="90.0" height="6" rx="3" fill="#cbd5e1" opacity="0.5"/><rect x="32" y="288" width="120.0" height="6" rx="3" fill="#cbd5e1" opacity="0.35"/><rect x="32" y="302" width="67.5" height="6" rx="3" fill="#cbd5e1" opacity="0.35"/>
+<rect x="184" y="250" width="150" height="96" rx="6" fill="url(#cardGrad)" opacity="0.55"/><rect x="192" y="258" width="134" height="8" rx="4" fill="#06b6d4" opacity="0.9"/><rect x="192" y="274" width="90.0" height="6" rx="3" fill="#cbd5e1" opacity="0.5"/><rect x="192" y="288" width="120.0" height="6" rx="3" fill="#cbd5e1" opacity="0.35"/><rect x="192" y="302" width="67.5" height="6" rx="3" fill="#cbd5e1" opacity="0.35"/>
+<rect x="344" y="250" width="150" height="96" rx="6" fill="url(#cardGrad)" opacity="0.55"/><rect x="352" y="258" width="134" height="8" rx="4" fill="#06b6d4" opacity="0.9"/><rect x="352" y="274" width="90.0" height="6" rx="3" fill="#cbd5e1" opacity="0.5"/><rect x="352" y="288" width="120.0" height="6" rx="3" fill="#cbd5e1" opacity="0.35"/><rect x="352" y="302" width="67.5" height="6" rx="3" fill="#cbd5e1" opacity="0.35"/>
+<rect x="504" y="250" width="150" height="96" rx="6" fill="url(#cardGrad)" opacity="0.55"/><rect x="512" y="258" width="134" height="8" rx="4" fill="#06b6d4" opacity="0.9"/><rect x="512" y="274" width="90.0" height="6" rx="3" fill="#cbd5e1" opacity="0.5"/><rect x="512" y="288" width="120.0" height="6" rx="3" fill="#cbd5e1" opacity="0.35"/><rect x="512" y="302" width="67.5" height="6" rx="3" fill="#cbd5e1" opacity="0.35"/>
+
+  <rect x="24" y="240" width="150" height="110" rx="10" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.10)"/><rect x="36" y="252" width="126" height="16" rx="6" fill="#22c55e" opacity="0.8"/><rect x="36" y="280" width="105.0" height="6" rx="3" fill="#cbd5e1" opacity="0.5"/><rect x="36" y="294" width="127.5" height="6" rx="3" fill="#cbd5e1" opacity="0.35"/>
+<rect x="184" y="240" width="150" height="110" rx="10" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.10)"/><rect x="196" y="252" width="126" height="16" rx="6" fill="#22c55e" opacity="0.8"/><rect x="196" y="280" width="105.0" height="6" rx="3" fill="#cbd5e1" opacity="0.5"/><rect x="196" y="294" width="127.5" height="6" rx="3" fill="#cbd5e1" opacity="0.35"/>
+<rect x="344" y="240" width="150" height="110" rx="10" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.10)"/><rect x="356" y="252" width="126" height="16" rx="6" fill="#22c55e" opacity="0.8"/><rect x="356" y="280" width="105.0" height="6" rx="3" fill="#cbd5e1" opacity="0.5"/><rect x="356" y="294" width="127.5" height="6" rx="3" fill="#cbd5e1" opacity="0.35"/>
+<rect x="504" y="240" width="150" height="110" rx="10" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.10)"/><rect x="516" y="252" width="126" height="16" rx="6" fill="#22c55e" opacity="0.8"/><rect x="516" y="280" width="105.0" height="6" rx="3" fill="#cbd5e1" opacity="0.5"/><rect x="516" y="294" width="127.5" height="6" rx="3" fill="#cbd5e1" opacity="0.35"/>
+
+  <!-- Overlay label -->
+  <rect x="0" y="340" width="640" height="60" fill="#0b0f17" opacity="0.55"/>
+  <rect x="0" y="340" width="640" height="1" fill="rgba(255,255,255,0.12)"/>
+  <text x="320" y="376" font-family="Plus Jakarta Sans, Segoe UI, sans-serif" font-size="22" font-weight="700" fill="#f8fafc" text-anchor="middle" letter-spacing="1">TechPulse Journal</text>
+</svg>

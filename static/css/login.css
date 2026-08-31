@@ -1,0 +1,363 @@
+/* =========================================================
+   NEXUS FLOW AI - PREMIUM LOGIN PAGE STYLESHEET
+   Theme: Sleek Dark Glassmorphism with var(--accent) Orange Accent
+   ========================================================= */
+
+:root {
+    --bg-primary: #0b0f17;
+    --bg-card: rgba(18, 24, 38, 0.78);
+    --border-color: rgba(var(--accent-rgb), 0.2);
+    --border-hover: rgba(var(--accent-rgb), 0.5);
+    
+    --accent: var(--primary-color);
+    
+    --text-main: #f8fafc;
+    --text-sub: #94a3b8;
+    --text-muted: #64748b;
+    
+    --transition-smooth: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: var(--bg-primary);
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: var(--text-main);
+    overflow: hidden;
+    position: relative;
+}
+
+/* =========================================================
+   Hide Browser Default Password Reveal / Clear Buttons
+   ========================================================= */
+input::-ms-reveal,
+input::-ms-clear,
+input::-webkit-contacts-auto-fill-button,
+input::-webkit-credentials-auto-fill-button {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    visibility: hidden !important;
+}
+
+/* =========================================================
+   Ambient Background Lighting Blurs
+   ========================================================= */
+.bg-lighting-blur {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(140px);
+    opacity: 0.18;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.lighting-1 {
+    top: -120px;
+    right: 15%;
+    width: 480px;
+    height: 480px;
+    background: var(--accent);
+}
+
+.lighting-2 {
+    bottom: -100px;
+    left: 15%;
+    width: 450px;
+    height: 450px;
+    background: var(--accent);
+}
+
+/* =========================================================
+   Login Card Container
+   ========================================================= */
+.login-wrapper {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 440px;
+    padding: 20px;
+}
+
+.login-card-glass {
+    background: var(--bg-card);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1.5px solid var(--border-color);
+    border-radius: 24px;
+    padding: 42px 36px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 35px rgba(var(--accent-rgb), 0.12);
+    transition: var(--transition-smooth);
+}
+
+.login-card-glass:hover {
+    border-color: var(--border-hover);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6), 0 0 45px rgba(var(--accent-rgb), 0.2);
+}
+
+/* =========================================================
+   Brand Header & Logo
+   ========================================================= */
+.login-brand {
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.logo-wrapper {
+    width: 76px;
+    height: 76px;
+    margin: 0 auto 16px;
+    border-radius: 20px;
+    background: rgba(var(--accent-rgb), 0.1);
+    border: 1.5px solid var(--border-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 20px rgba(var(--accent-rgb), 0.2);
+    transition: var(--transition-smooth);
+}
+
+.login-card-glass:hover .logo-wrapper {
+    transform: scale(1.05) rotate(3deg);
+    border-color: var(--accent);
+    box-shadow: 0 0 28px rgba(var(--accent-rgb), 0.4);
+}
+
+.login-logo {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+}
+
+.logo-fallback-icon {
+    font-size: 1.8rem;
+    color: var(--accent);
+}
+
+.login-brand h1 {
+    font-size: 1.65rem;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+}
+
+.subtitle {
+    font-size: 0.88rem;
+    color: var(--text-sub);
+    font-weight: 500;
+}
+
+/* =========================================================
+   Error Message Banner
+   ========================================================= */
+.error-message {
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    color: #f87171;
+    padding: 12px 16px;
+    border-radius: 14px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 22px;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* =========================================================
+   Form Fields Styling
+   ========================================================= */
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #cbd5e1;
+}
+
+.label-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.input-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon {
+    position: absolute;
+    left: 16px;
+    font-size: 1rem;
+    color: var(--text-muted);
+    transition: var(--transition-smooth);
+    pointer-events: none;
+    z-index: 2;
+}
+
+.input-input-wrapper input {
+    width: 100%;
+    padding: 14px 48px 14px 46px;
+    background: rgba(15, 22, 36, 0.7);
+    border: 1.5px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    color: #ffffff;
+    font-size: 0.95rem;
+    font-family: inherit;
+    transition: var(--transition-smooth);
+    outline: none;
+}
+
+.input-input-wrapper input::placeholder {
+    color: var(--text-muted);
+}
+
+.input-input-wrapper input:focus {
+    border-color: var(--accent);
+    background: rgba(15, 22, 36, 0.9);
+    box-shadow: 0 0 18px rgba(var(--accent-rgb), 0.25);
+}
+
+.input-input-wrapper input:focus ~ .input-icon {
+    color: var(--accent);
+}
+
+/* Password Visibility Toggle Single Eye Icon */
+.password-container {
+    position: relative;
+}
+
+.eye-icon {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.05rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    z-index: 10;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.eye-icon:hover {
+    color: var(--accent);
+    background: rgba(var(--accent-rgb), 0.15);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.eye-icon:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
+/* =========================================================
+   Login Submit Button
+   ========================================================= */
+.login-page-btn {
+    width: 100%;
+    padding: 15px;
+    margin-top: 6px;
+    background: var(--accent-gradient);
+    border: none;
+    border-radius: 14px;
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 8px 24px rgba(var(--accent-rgb), 0.4);
+    transition: var(--transition-smooth);
+}
+
+.login-page-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(var(--accent-rgb), 0.6);
+}
+
+.login-page-btn:active {
+    transform: translateY(0);
+}
+
+.login-page-btn i {
+    transition: transform 0.25s ease;
+}
+
+.login-page-btn:hover i {
+    transform: translateX(4px);
+}
+
+/* =========================================================
+   Register Link Footer
+   ========================================================= */
+.register-link {
+    text-align: center;
+    color: var(--text-sub);
+    font-size: 0.9rem;
+    margin-top: 10px;
+}
+
+.register-link a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 700;
+    margin-left: 4px;
+    transition: var(--transition-smooth);
+}
+
+.register-link a:hover {
+    color: var(--accent-light);
+    text-decoration: underline;
+}
+
+/* =========================================================
+   Responsive Breakpoints
+   ========================================================= */
+@media (max-width: 480px) {
+    .login-card-glass {
+        padding: 32px 24px;
+        border-radius: 20px;
+    }
+
+    .login-brand h1 {
+        font-size: 1.45rem;
+    }
+}

@@ -1,0 +1,375 @@
+{% extends "base.html" %}
+{% set active_page = 'admin' %}
+
+{% block title %}Admin Control Center | Nexus Flow{% endblock %}
+{% block page_title %}Admin Control Center{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin-center.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="ac-page">
+
+    <div class="ac-header">
+        <div class="ac-header-left">
+            <div class="ac-header-icon"><i class="fa-solid fa-shield-halved"></i></div>
+            <div>
+                <h1 class="ac-header-title">Admin Control Center</h1>
+                <p class="ac-header-sub">Monitor platform health, manage users, and track AI activity.</p>
+            </div>
+        </div>
+        <div class="ac-header-right">
+            <span class="ac-header-badge"><i class="fa-solid fa-circle" style="color:#4ade80;"></i> System Online</span>
+        </div>
+    </div>
+
+    <div class="ac-nav">
+        <a href="/admin/dashboard" class="ac-nav-item {% if section == 'dashboard' %}active{% endif %}"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+        <a href="/admin/users" class="ac-nav-item {% if section == 'users' %}active{% endif %}"><i class="fa-solid fa-users"></i> Users</a>
+        <a href="/admin/projects" class="ac-nav-item {% if section == 'projects' %}active{% endif %}"><i class="fa-solid fa-folder"></i> Projects</a>
+        <a href="/admin/downloads" class="ac-nav-item {% if section == 'downloads' %}active{% endif %}"><i class="fa-solid fa-download"></i> Downloads</a>
+        <a href="/admin/providers" class="ac-nav-item {% if section == 'providers' %}active{% endif %}"><i class="fa-solid fa-microchip"></i> AI Providers</a>
+        <a href="/admin/logs" class="ac-nav-item {% if section == 'logs' %}active{% endif %}"><i class="fa-solid fa-shield-halved"></i> Audit Logs</a>
+        <a href="/admin/health" class="ac-nav-item {% if section == 'health' %}active{% endif %}"><i class="fa-solid fa-heart-pulse"></i> System Health</a>
+    </div>
+
+{% if section == 'dashboard' %}
+    <div class="ac-stats">
+        <div class="ac-stat-card">
+            <div class="ac-stat-icon ac-stat-blue"><i class="fa-solid fa-users"></i></div>
+            <div class="ac-stat-info">
+                <span class="ac-stat-num">{{ stats.total_users }}</span>
+                <span class="ac-stat-label">Total Users</span>
+            </div>
+            <div class="ac-stat-badge">{{ stats.new_users_week }} this week</div>
+        </div>
+        <div class="ac-stat-card">
+            <div class="ac-stat-icon ac-stat-purple"><i class="fa-solid fa-folder"></i></div>
+            <div class="ac-stat-info">
+                <span class="ac-stat-num">{{ stats.total_projects }}</span>
+                <span class="ac-stat-label">Total Projects</span>
+            </div>
+            <div class="ac-stat-badge">{{ stats.new_projects_week }} this week</div>
+        </div>
+        <div class="ac-stat-card">
+            <div class="ac-stat-icon ac-stat-green"><i class="fa-solid fa-download"></i></div>
+            <div class="ac-stat-info">
+                <span class="ac-stat-num">{{ stats.total_downloads }}</span>
+                <span class="ac-stat-label">Total Downloads</span>
+            </div>
+            <div class="ac-stat-badge">{{ stats.new_downloads_week }} this week</div>
+        </div>
+        <div class="ac-stat-card">
+            <div class="ac-stat-icon ac-stat-orange"><i class="fa-solid fa-microchip"></i></div>
+            <div class="ac-stat-info">
+                <span class="ac-stat-num">{{ stats.ai_requests }}</span>
+                <span class="ac-stat-label">AI Requests</span>
+            </div>
+            <div class="ac-stat-badge">{{ stats.ai_requests_week }} this week</div>
+        </div>
+    </div>
+
+    <div class="ac-grid-2">
+        <div class="ac-panel">
+            <div class="ac-panel-head">
+                <h3><i class="fa-solid fa-microchip"></i> AI Providers</h3>
+                <span class="ac-panel-badge">{{ providers|length }} configured</span>
+            </div>
+            <div class="ac-panel-body">
+                {% for p in providers %}
+                <div class="ac-provider-row">
+                    <div class="ac-provider-dot {% if p.has_api_key %}online{% else %}offline{% endif %}"></div>
+                    <div class="ac-provider-info">
+                        <span class="ac-provider-name">{{ p.name }}</span>
+                        <span class="ac-provider-model">{{ p.active_model or 'None active' }} | {{ p.model_count }} models</span>
+                    </div>
+                    <span class="ac-provider-status {% if p.has_api_key %}online{% else %}offline{% endif %}">{{ 'Online' if p.has_api_key else 'No API Key' }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="ac-panel">
+            <div class="ac-panel-head"><h3><i class="fa-solid fa-heart-pulse"></i> System Health</h3></div>
+            <div class="ac-panel-body">
+                {% for key, item in health.items() %}
+                <div class="ac-health-row">
+                    <div class="ac-health-dot {{ item.status }}"></div>
+                    <div class="ac-health-info">
+                        <span class="ac-health-name">{{ key|replace('_', ' ')|title }}</span>
+                        <span class="ac-health-msg">{{ item.message }}</span>
+                    </div>
+                    <span class="ac-health-badge {{ item.status }}">{{ item.status|upper }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="ac-panel">
+        <div class="ac-panel-head">
+            <h3><i class="fa-solid fa-clock-rotate-left"></i> Recent Activity</h3>
+            <a href="/admin/logs" class="ac-panel-link">View All <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+        <div class="ac-panel-body">
+            {% if recent_logs %}
+            <div class="ac-timeline">
+                {% for log in recent_logs %}
+                <div class="ac-timeline-row">
+                    <div class="ac-timeline-dot {{ log.status|lower }}"></div>
+                    <div class="ac-timeline-user">{{ log.user_email }}</div>
+                    <div class="ac-timeline-action">{{ log.action }}</div>
+                    <div class="ac-timeline-details">{{ log.details|truncate(80) }}</div>
+                    <div class="ac-timeline-time">{{ log.timestamp }}</div>
+                    <span class="ac-timeline-badge {{ log.status|lower }}">{{ log.status }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="ac-empty-inline"><i class="fa-solid fa-inbox"></i> No audit logs yet. Events appear as users interact with the platform.</div>
+            {% endif %}
+        </div>
+    </div>
+{% endif %}
+
+{% if section == 'users' %}
+    <div class="ac-panel">
+        <div class="ac-panel-head">
+            <h3><i class="fa-solid fa-users"></i> User Management</h3>
+            <span class="ac-panel-badge">{{ total_users }} total</span>
+        </div>
+        <div class="ac-panel-toolbar">
+            <div class="ac-search">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="userSearch" placeholder="Search users by name or email..." value="{{ search_query }}">
+            </div>
+        </div>
+        <div class="ac-panel-body" style="padding:0;">
+            <table class="ac-table" id="usersTable">
+                <thead><tr><th>User</th><th>Email</th><th>Projects</th><th>Downloads</th><th>AI Chats</th><th>Joined</th><th>Actions</th></tr></thead>
+                <tbody>
+                    {% for u in users %}
+                    <tr id="user-row-{{ u.id }}">
+                        <td>
+                            <div class="ac-user-cell">
+                                <div class="ac-avatar">{% if u.profile_image %}<img src="{{ u.profile_image }}" alt="{{ u.fullname }}">{% else %}{{ u.fullname[:2]|upper }}{% endif %}</div>
+                                <span class="ac-user-name">{{ u.fullname }}</span>
+                            </div>
+                        </td>
+                        <td><span class="ac-email">{{ u.email }}</span></td>
+                        <td><span class="ac-metric">{{ u.project_count }}</span></td>
+                        <td><span class="ac-metric">{{ u.download_count }}</span></td>
+                        <td><span class="ac-metric">{{ u.chat_count }}</span></td>
+                        <td><span class="ac-date">{{ u.created_at }}</span></td>
+                        <td>
+                            <div class="ac-row-actions">
+                                {% if u.email != current_user_email %}
+                                <button class="ac-row-btn ac-row-delete" data-id="{{ u.id }}" data-name="{{ u.fullname }}" title="Delete user"><i class="fa-solid fa-trash-can"></i></button>
+                                {% else %}
+                                <span class="ac-protected"><i class="fa-solid fa-lock"></i> You</span>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% if not users %}<div class="ac-empty-inline"><i class="fa-solid fa-users-slash"></i> No users found.</div>{% endif %}
+        </div>
+    </div>
+{% endif %}
+
+{% if section == 'projects' %}
+    <div class="ac-stats ac-stats-3">
+        <div class="ac-stat-card"><div class="ac-stat-icon ac-stat-purple"><i class="fa-solid fa-folder"></i></div><div class="ac-stat-info"><span class="ac-stat-num">{{ analytics.total }}</span><span class="ac-stat-label">Total Projects</span></div></div>
+        <div class="ac-stat-card"><div class="ac-stat-icon ac-stat-blue"><i class="fa-solid fa-users"></i></div><div class="ac-stat-info"><span class="ac-stat-num">{{ analytics.by_user|length }}</span><span class="ac-stat-label">Active Creators</span></div></div>
+        <div class="ac-stat-card"><div class="ac-stat-icon ac-stat-green"><i class="fa-solid fa-chart-pie"></i></div><div class="ac-stat-info"><span class="ac-stat-num">{{ analytics.categories|length }}</span><span class="ac-stat-label">Categories</span></div></div>
+    </div>
+    <div class="ac-grid-2">
+        <div class="ac-panel">
+            <div class="ac-panel-head"><h3><i class="fa-solid fa-chart-pie"></i> Website Categories</h3></div>
+            <div class="ac-panel-body">
+                {% for cat, count in analytics.categories.items() %}
+                <div class="ac-category-row">
+                    <div class="ac-category-icon">{% if cat == 'portfolio' %}<i class="fa-solid fa-briefcase"></i>{% elif cat == 'saas' %}<i class="fa-solid fa-cloud"></i>{% elif cat == 'ecommerce' %}<i class="fa-solid fa-cart-shopping"></i>{% elif cat == 'restaurant' %}<i class="fa-solid fa-utensils"></i>{% elif cat == 'blog' %}<i class="fa-solid fa-pen-nib"></i>{% else %}<i class="fa-solid fa-globe"></i>{% endif %}</div>
+                    <div class="ac-category-info">
+                        <span class="ac-category-name">{{ cat|title }}</span>
+                        <div class="ac-category-bar"><div class="ac-category-fill" style="width:{{ (count / analytics.total * 100) if analytics.total > 0 else 0 }}%"></div></div>
+                    </div>
+                    <span class="ac-category-count">{{ count }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="ac-panel">
+            <div class="ac-panel-head"><h3><i class="fa-solid fa-trophy"></i> Most Active Users</h3></div>
+            <div class="ac-panel-body">
+                {% for u in analytics.by_user[:8] %}
+                <div class="ac-active-user">
+                    <div class="ac-active-rank">{{ loop.index }}</div>
+                    <div class="ac-active-info">
+                        <span class="ac-active-email">{{ u.email }}</span>
+                        <span class="ac-active-count">{{ u.count }} project{{ 's' if u.count != 1 else '' }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+                {% if not analytics.by_user %}<div class="ac-empty-inline"><i class="fa-solid fa-users-slash"></i> No project data yet.</div>{% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="ac-panel">
+        <div class="ac-panel-head"><h3><i class="fa-solid fa-clock"></i> Recent Projects</h3></div>
+        <div class="ac-panel-body" style="padding:0;">
+            <table class="ac-table"><thead><tr><th>Project</th><th>Owner</th><th>Created</th></tr></thead><tbody>
+                {% for p in analytics.recent %}<tr><td><span class="ac-file-name">{{ p.title }}</span></td><td><span class="ac-email">{{ p.user_email }}</span></td><td><span class="ac-date">{{ p.created_at }}</span></td></tr>{% endfor %}
+            </tbody></table>
+            {% if not analytics.recent %}<div class="ac-empty-inline"><i class="fa-solid fa-folder-open"></i> No projects yet.</div>{% endif %}
+        </div>
+    </div>
+{% endif %}
+
+{% if section == 'downloads' %}
+    <div class="ac-stats ac-stats-3">
+        <div class="ac-stat-card"><div class="ac-stat-icon ac-stat-green"><i class="fa-solid fa-download"></i></div><div class="ac-stat-info"><span class="ac-stat-num">{{ download_analytics.total }}</span><span class="ac-stat-label">Total Downloads</span></div></div>
+        <div class="ac-stat-card"><div class="ac-stat-icon ac-stat-blue"><i class="fa-solid fa-file-zipper"></i></div><div class="ac-stat-info"><span class="ac-stat-num">{{ download_analytics.by_type.zip }}</span><span class="ac-stat-label">ZIP Archives</span></div></div>
+        <div class="ac-stat-card"><div class="ac-stat-icon ac-stat-purple"><i class="fa-solid fa-file-code"></i></div><div class="ac-stat-info"><span class="ac-stat-num">{{ download_analytics.by_type.html }}</span><span class="ac-stat-label">HTML Exports</span></div></div>
+    </div>
+    <div class="ac-panel">
+        <div class="ac-panel-head"><h3><i class="fa-solid fa-clock"></i> Recent Downloads</h3></div>
+        <div class="ac-panel-body" style="padding:0;">
+            <table class="ac-table"><thead><tr><th>File</th><th>Type</th><th>Size</th><th>User</th><th>Date</th></tr></thead><tbody>
+                {% for d in download_analytics.recent %}
+                <tr><td><span class="ac-file-name">{{ d.file_name }}</span></td><td><span class="ac-type-badge {% if 'ZIP' in d.file_type %}type-zip{% elif 'Deploy' in d.file_type %}type-deploy{% else %}type-html{% endif %}">{{ d.file_type }}</span></td><td><span class="ac-size">{{ d.size }}</span></td><td><span class="ac-email">{{ d.user_email }}</span></td><td><span class="ac-date">{{ d.downloaded_at }}</span></td></tr>
+                {% endfor %}
+            </tbody></table>
+            {% if not download_analytics.recent %}<div class="ac-empty-inline"><i class="fa-solid fa-download"></i> No downloads yet.</div>{% endif %}
+        </div>
+    </div>
+{% endif %}
+
+{% if section == 'providers' %}
+    <div class="ac-panel">
+        <div class="ac-panel-head">
+            <h3><i class="fa-solid fa-microchip"></i> AI Provider Status</h3>
+            <span class="ac-panel-badge">Auto-select: {{ 'Enabled' if providers[0].model_count > 0 else 'Disabled' }}</span>
+        </div>
+        <div class="ac-panel-body">
+            {% for p in providers %}
+            <div class="ac-provider-card">
+                <div class="ac-provider-card-head">
+                    <div class="ac-provider-icon">{% if p.provider_key == 'gemini' %}<i class="fa-solid fa-gem"></i>{% elif p.provider_key == 'openai' %}<i class="fa-solid fa-brain"></i>{% else %}<i class="fa-solid fa-server"></i>{% endif %}</div>
+                    <div class="ac-provider-card-info">
+                        <h4>{{ p.name }}</h4>
+                        <span class="ac-provider-model">{{ p.models|length }} models | {{ p.active_model or 'None active' }}</span>
+                    </div>
+                    <span class="ac-provider-status {% if p.has_api_key %}online{% else %}offline{% endif %}">{{ 'Online' if p.has_api_key else 'No API Key' }}</span>
+                </div>
+                <div class="ac-provider-card-body">
+                    <div class="ac-provider-detail"><span class="ac-detail-label">API Key</span><span class="ac-detail-value">{{ 'Configured' if p.has_api_key else 'Not Set' }}</span></div>
+                    <div class="ac-provider-detail"><span class="ac-detail-label">Models Available</span><span class="ac-detail-value">{{ p.model_count }} / {{ p.total_models }}</span></div>
+                    <div class="ac-provider-models">
+                        {% for m in p.models %}
+                        <div class="ac-model-row {% if m.is_active %}active{% endif %} {% if m.last_status == 'failed' %}failed{% elif m.last_status == 'working' %}working{% elif m.last_status == 'partial' %}partial{% endif %}">
+                            <span class="ac-model-name">{{ m.model }}</span>
+                            <span class="ac-model-status {{ m.last_status }}">{{ m.last_status|upper }}</span>
+                            {% if m.last_error %}<span class="ac-model-error" title="{{ m.last_error }}"><i class="fa-solid fa-triangle-exclamation"></i></span>{% endif %}
+                            {% if m.is_active %}<span class="ac-model-active"><i class="fa-solid fa-star"></i> ACTIVE</span>{% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="ac-provider-card-actions">
+                    <button class="ac-btn ac-btn-ghost ac-test-provider" data-provider="{{ p.provider_key }}"><i class="fa-solid fa-plug"></i> Test Connection</button>
+                    {% if p.has_api_key %}
+                    <button class="ac-btn ac-btn-primary ac-auto-select" data-provider="{{ p.provider_key }}"><i class="fa-solid fa-magic"></i> Auto-Select Best</button>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="ac-panel">
+        <div class="ac-panel-head"><h3><i class="fa-solid fa-heart-pulse"></i> System Health</h3></div>
+        <div class="ac-panel-body">
+            {% for key, item in health.items() %}
+            <div class="ac-health-row"><div class="ac-health-dot {{ item.status }}"></div><div class="ac-health-info"><span class="ac-health-name">{{ key|replace('_', ' ')|title }}</span><span class="ac-health-msg">{{ item.message }}</span></div><span class="ac-health-badge {{ item.status }}">{{ item.status|upper }}</span></div>
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}
+
+{% if section == 'logs' %}
+    <div class="ac-panel">
+        <div class="ac-panel-head">
+            <h3><i class="fa-solid fa-shield-halved"></i> Security Audit Logs</h3>
+            <span class="ac-panel-badge">{{ total_logs }} entries</span>
+        </div>
+        <div class="ac-panel-toolbar">
+            <div class="ac-search"><i class="fa-solid fa-magnifying-glass"></i><input type="text" id="logSearch" placeholder="Search logs by user email..."></div>
+        </div>
+        <div class="ac-panel-body" style="padding:0;">
+            <table class="ac-table" id="logsTable">
+                <thead><tr><th>Timestamp</th><th>User</th><th>Action</th><th>Details</th><th>Status</th></tr></thead>
+                <tbody>
+                    {% for log in logs %}
+                    <tr>
+                        <td><span class="ac-date">{{ log.timestamp }}</span></td>
+                        <td><span class="ac-email">{{ log.user_email }}</span></td>
+                        <td><span class="ac-action-tag">{{ log.action }}</span></td>
+                        <td><span class="ac-details">{{ log.details|truncate(100) }}</span></td>
+                        <td><span class="ac-log-badge {{ log.status|lower }}">{{ log.status }}</span></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% if not logs %}<div class="ac-empty-inline"><i class="fa-solid fa-shield-halved"></i> No audit logs recorded yet.</div>{% endif %}
+        </div>
+    </div>
+{% endif %}
+
+{% if section == 'health' %}
+    <div class="ac-panel">
+        <div class="ac-panel-head"><h3><i class="fa-solid fa-heart-pulse"></i> System Health</h3></div>
+        <div class="ac-panel-body">
+            {% for key, item in health.items() %}
+            <div class="ac-health-row"><div class="ac-health-dot {{ item.status }}"></div><div class="ac-health-info"><span class="ac-health-name">{{ key|replace('_', ' ')|title }}</span><span class="ac-health-msg">{{ item.message }}</span></div><span class="ac-health-badge {{ item.status }}">{{ item.status|upper }}</span></div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="ac-panel">
+        <div class="ac-panel-head"><h3><i class="fa-solid fa-microchip"></i> Provider Status</h3></div>
+        <div class="ac-panel-body">
+            {% for p in providers %}
+            <div class="ac-provider-row"><div class="ac-provider-dot {% if p.configured %}online{% else %}offline{% endif %}"></div><div class="ac-provider-info"><span class="ac-provider-name">{{ p.name }}</span><span class="ac-provider-model">{{ p.model }}</span></div><span class="ac-provider-status {% if p.configured %}online{% else %}offline{% endif %}">{{ 'Online' if p.configured else 'Offline' }}</span></div>
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}
+
+</div>
+
+<div id="toastNotification" class="ac-toast"><i id="toastIcon" class="fa-solid fa-circle-check"></i><span id="toastMessage"></span></div>
+
+<div id="deleteUserModal" class="ac-modal-overlay">
+    <div class="ac-modal ac-modal-sm">
+        <div class="ac-modal-head">
+            <h3 style="color:#ef4444;"><i class="fa-solid fa-triangle-exclamation"></i> Delete User</h3>
+            <button class="ac-modal-close" id="closeDeleteModal"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="ac-modal-body-text">
+            <p>Are you sure you want to delete <strong id="deleteUserName"></strong>?</p>
+            <p class="ac-warning">This will permanently remove all their projects, downloads, and chat history. This action cannot be undone.</p>
+        </div>
+        <div class="ac-modal-foot">
+            <button type="button" class="ac-btn ac-btn-ghost" id="cancelDeleteBtn">Cancel</button>
+            <button type="button" class="ac-btn ac-btn-danger" id="confirmDeleteBtn"><i class="fa-solid fa-trash-can"></i> Delete User</button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/admin-center.js') }}"></script>
+{% endblock %}

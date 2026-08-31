@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" data-theme-color="{{ theme_color }}" data-theme-value="{{ theme_color_value }}" data-theme-mode="{{ theme_mode }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#070b16">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <title>{% block title %}Nexus Flow AI Website Builder{% endblock %}</title>
+
+    <!-- Local Fonts (vendored to avoid CDN tracking prevention) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/fonts/fonts.css') }}">
+
+    <!-- Font Awesome Icons (local vendor) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/fontawesome/css/all.min.css') }}">
+
+    <!-- Global Theme System -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+    <!-- Global Sidebar CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
+    <!-- Notifications Dropdown CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/notifications.css') }}">
+    
+    <!-- Early Theme Script (Prevents Flickering) -->
+    <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<div class="app-layout">
+
+    <!-- Left Sidebar Navigation -->
+    <aside id="appSidebar" class="app-sidebar">
+        <div class="sidebar-top">
+            <a href="/dashboard" class="sidebar-brand">
+                <i class="fa-solid fa-wand-magic-sparkles brand-icon"></i>
+                <span class="brand-name">NEXUS FLOW</span>
+            </a>
+        </div>
+
+        <nav class="sidebar-menu">
+            <a href="/dashboard" class="nav-item {% if active_page == 'dashboard' %}active{% endif %}" title="Dashboard">
+                <i class="fa-solid fa-house"></i>
+                <span class="nav-text">Dashboard</span>
+            </a>
+            <a href="/builder" class="nav-item {% if active_page == 'builder' %}active{% endif %}" title="Nexus Flow">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <span class="nav-text">Nexus Flow</span>
+            </a>
+            <a href="/jarvis" class="nav-item {% if active_page == 'jarvis' %}active{% endif %}" title="Jarvis AI">
+                <i class="fa-solid fa-robot"></i>
+                <span class="nav-text">Jarvis AI</span>
+            </a>
+            <a href="/projects" class="nav-item {% if active_page == 'projects' %}active{% endif %}" title="My Projects">
+                <i class="fa-solid fa-folder"></i>
+                <span class="nav-text">My Projects</span>
+            </a>
+            <a href="/downloads" class="nav-item {% if active_page == 'downloads' %}active{% endif %}" title="Downloads">
+                <i class="fa-solid fa-download"></i>
+                <span class="nav-text">Downloads</span>
+            </a>
+            <a href="/profile" class="nav-item {% if active_page == 'profile' %}active{% endif %}" title="Profile">
+                <i class="fa-solid fa-user"></i>
+                <span class="nav-text">Profile</span>
+            </a>
+            <a href="/settings" class="nav-item {% if active_page == 'settings' %}active{% endif %}" title="Settings">
+                <i class="fa-solid fa-gear"></i>
+                <span class="nav-text">Settings</span>
+            </a>
+            <a href="/admin" class="nav-item {% if active_page == 'admin' %}active{% endif %}" title="Admin Control">
+                <i class="fa-solid fa-shield-halved"></i>
+                <span class="nav-text">Admin Control</span>
+            </a>
+            <a href="/" class="nav-item logout-item" title="Logout">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span class="nav-text">Logout</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Mobile Sidebar Backdrop Overlay -->
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+    <!-- Main Layout Wrapper Auto Expansion -->
+    <div id="mainLayoutWrapper" class="main-layout-wrapper">
+        
+        <!-- Professional Top Navigation Bar -->
+        <header class="top-nav-bar">
+            <!-- Left: Hamburger Toggle + Brand Logo -->
+            <div class="nav-left">
+                <button id="hamburgerBtn" class="hamburger-toggle-btn" title="Toggle Sidebar">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <div class="nav-brand-logo">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span>NEXUS FLOW</span>
+                </div>
+            </div>
+
+            <!-- Center: Current Page Title -->
+            <div class="nav-center">
+                <h1 class="page-title-heading">{% block page_title %}Nexus Flow AI{% endblock %}</h1>
+            </div>
+
+            <!-- Right: Notifications, Profile Avatar -->
+            <div class="nav-right">
+                <div class="nav-notifications-wrap">
+                    <button class="nav-icon-btn" id="notifToggleBtn" title="Notifications" aria-label="Notifications">
+                        <i class="fa-solid fa-bell"></i>
+                        <span class="notification-badge" id="notifBadge" {% if not notification_count %}style="display:none;"{% endif %}>{{ notification_count }}</span>
+                    </button>
+
+                    <!-- Notifications Dropdown -->
+                    <div class="notif-dropdown" id="notifDropdown">
+                        <div class="notif-header">
+                            <span class="notif-header-title">Notifications</span>
+                            <button class="notif-mark-all-btn" id="notifMarkAllBtn" title="Mark all as read">
+                                Mark all as read
+                            </button>
+                        </div>
+                        <div class="notif-list" id="notifList">
+                            <div class="notif-empty">
+                                <i class="fa-solid fa-bell-slash"></i>
+                                <span>No notifications yet.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <a href="/profile" class="nav-profile-link" title="View Profile">
+                    <div class="nav-avatar">
+                        {% set pimg = current_user_avatar if current_user_avatar is defined and current_user_avatar else profile_image_url(current_user if current_user is defined and current_user else user) %}
+                        {% if pimg %}
+                            <img src="{{ pimg }}" alt="User Avatar" onerror="this.onerror=null; this.src='{{ fallback_avatar if fallback_avatar is defined else url_for('static', filename='images/profile-icon.png') }}'; this.onerror=function(){ this.style.display='none'; this.nextElementSibling.style.display='flex'; }">
+                            <i class="fa-solid fa-user" style="display:none; align-items:center; justify-content:center; width:100%; height:100%;"></i>
+                        {% else %}
+                            <img src="{{ fallback_avatar if fallback_avatar is defined else url_for('static', filename='images/profile-icon.png') }}" alt="Default Avatar" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <i class="fa-solid fa-user" style="display:none; align-items:center; justify-content:center; width:100%; height:100%;"></i>
+                        {% endif %}
+                    </div>
+                </a>
+            </div>
+        </header>
+
+        <!-- Main Page Content Body -->
+        <main class="page-content-body">
+            {% block content %}{% endblock %}
+        </main>
+
+    </div>
+
+</div>
+
+<!-- Sidebar Interactive Script -->
+    <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
+    <!-- Notifications Dropdown Script -->
+    <script src="{{ url_for('static', filename='js/notifications.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

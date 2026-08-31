@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% set active_page = 'code' %}
+
+{% block title %}Code Editor | Nexus Flow{% endblock %}
+{% block page_title %}Code Editor{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/builder-v2.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/code-page.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/live-website-preview.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="nb-shell nb-shell--full" id="nbCodeShell">
+
+    <!-- TOP BAR -->
+    <header class="nb-topbar">
+        <div class="nb-topbar-center">
+            <i class="fa-solid fa-code nb-proj-icon"></i>
+            <span class="nb-project-name" id="nbCodeProjectName">Code Editor</span>
+            <span class="nb-code-project-badge" id="nbCodeProjectBadge">No project loaded</span>
+        </div>
+        <div class="nb-topbar-actions">
+            <a href="/builder" class="nb-btn nb-btn-ghost" title="Back to Builder">
+                <i class="fa-solid fa-wand-magic-sparkles"></i><span>Builder</span>
+            </a>
+            <a href="/quality" class="nb-btn nb-btn-ghost" title="Quality Dashboard">
+                <i class="fa-solid fa-shield-halved"></i><span>Quality</span>
+            </a>
+            <button id="nbCodeSaveBtn" class="nb-btn nb-btn-ghost" title="Save project">
+                <i class="fa-solid fa-floppy-disk"></i><span>Save</span>
+            </button>
+            <button id="nbCodeDownloadBtn" class="nb-btn nb-btn-primary" title="Download ZIP">
+                <i class="fa-solid fa-download"></i><span>Download</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN LAYOUT -->
+    <div class="nb-code-workspace">
+
+        <!-- LEFT: File Tree -->
+        <aside class="nb-filetree">
+            <div class="nb-filetree-head">
+                <span><i class="fa-solid fa-folder-tree"></i> Explorer</span>
+                <button id="nbAddFileBtn" class="nb-tree-action" title="Add a new file">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+            </div>
+            <div id="nbFileTree" class="nb-filetree-body"></div>
+            <div class="nb-filetree-foot">
+                <span id="nbFileCount">0 files</span>
+            </div>
+        </aside>
+
+        <!-- CENTER: Code Editor -->
+        <div class="nb-editor">
+            <div class="nb-editor-tabs" id="nbEditorTabs"></div>
+            <div class="nb-editor-toolbar">
+                <span id="nbActiveFileName" class="nb-active-file">index.html</span>
+                <div class="nb-editor-toolbar-right">
+                    <button id="nbCopyCodeBtn" class="nb-mini-btn" title="Copy active file"><i class="fa-solid fa-copy"></i> Copy</button>
+                    <button id="nbFormatBtn" class="nb-mini-btn" title="Format code"><i class="fa-solid fa-align-left"></i> Format</button>
+                    <button id="nbRenameFileBtn" class="nb-mini-btn" title="Rename file"><i class="fa-solid fa-pen"></i></button>
+                    <button id="nbDeleteFileBtn" class="nb-mini-btn nb-danger" title="Delete file"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            </div>
+            <div id="nbMonaco" class="nb-monaco"></div>
+            <div id="nbFallbackEditor" class="nb-fallback-editor" style="display:none;">
+                <textarea id="nbFallbackTextarea" class="nb-fallback-textarea" spellcheck="false"></textarea>
+            </div>
+            <div class="nb-editor-statusbar">
+                <span id="nbStatusLanguage"><i class="fa-solid fa-code"></i> HTML</span>
+                <span id="nbStatusLn">Ln 1, Col 1</span>
+                <span class="nb-unsaved" id="nbUnsavedBadge" style="display:none;"><i class="fa-solid fa-circle"></i> Unsaved</span>
+                <span class="nb-spacer"></span>
+                <button id="nbApplyCodeBtn" class="nb-btn nb-btn-primary nb-apply-btn">
+                    <i class="fa-solid fa-check"></i><span>Apply Changes</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- RIGHT: Live Preview (shared component) -->
+        <div class="nb-code-preview" id="nbCodePreviewContainer">
+            <!-- Empty state (shown when no project loaded) -->
+            <div id="nbCodeEmpty" class="nb-code-empty">
+                <div class="nb-code-empty-inner">
+                    <i class="fa-solid fa-code"></i>
+                    <h3>Code Editor</h3>
+                    <p>No project loaded. Generate a website in the Builder, then come here to edit the code.</p>
+                    <a href="/builder" class="nb-btn nb-btn-primary"><i class="fa-solid fa-wand-magic-sparkles"></i> Open Builder</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- NEW FILE MODAL -->
+<div id="nbNewFileModal" class="nb-modal-overlay" style="display:none;">
+    <div class="nb-modal-card nb-modal-small">
+        <div class="nb-modal-header">
+            <h3><i class="fa-solid fa-file-circle-plus"></i> Create New File</h3>
+            <button type="button" class="nb-modal-close" data-close-newfile title="Close"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="nb-modal-body">
+            <div class="nb-field">
+                <label for="nbNewFileNameInput"><i class="fa-solid fa-file"></i> File name</label>
+                <input type="text" id="nbNewFileNameInput" class="nb-input" spellcheck="false" autocomplete="off" placeholder="e.g. about.html">
+            </div>
+            <div class="nb-field">
+                <label for="nbNewFileTypeSelect"><i class="fa-solid fa-code"></i> File type</label>
+                <select id="nbNewFileTypeSelect" class="nb-select">
+                    <option value="html">HTML</option>
+                    <option value="css">CSS</option>
+                    <option value="javascript">JavaScript</option>
+                    <option value="json">JSON</option>
+                    <option value="markdown">Markdown</option>
+                    <option value="plaintext">Text</option>
+                </select>
+            </div>
+        </div>
+        <div class="nb-modal-footer">
+            <button type="button" class="nb-btn nb-btn-ghost" data-close-newfile>Cancel</button>
+            <button type="button" id="nbNewFileCreateBtn" class="nb-btn nb-btn-primary"><i class="fa-solid fa-plus"></i><span>Create</span></button>
+        </div>
+    </div>
+</div>
+
+<input type="file" id="nbNewFileInput" accept=".html,.css,.js,.json,.md" style="display:none;">
+<div id="nbToast" class="nb-toast"><i class="fa-solid fa-circle-check"></i><span id="nbToastMsg"></span></div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    window.__INITIAL_PROJECT_ID = "{{ initial_project_id or '' }}";
+</script>
+<script src="/static/vendor/monaco/min/vs/loader.js"></script>
+<script src="{{ url_for('static', filename='js/preview-store.js') }}"></script>
+<script src="{{ url_for('static', filename='js/live-website-preview.js') }}"></script>
+<script src="{{ url_for('static', filename='js/live-preview.js') }}"></script>
+<script src="{{ url_for('static', filename='js/code-page.js') }}"></script>
+{% endblock %}

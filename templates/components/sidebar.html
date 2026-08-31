@@ -1,0 +1,26 @@
+<aside class="sidebar-shell">
+  <div class="brand-block">
+    <div class="brand-mark">N</div>
+    <div>
+      <h3>Nexus Flow</h3>
+      <p>AI Website Studio</p>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <a href="/dashboard" class="nav-link{% if active_page == 'dashboard' %} active{% endif %}"><i class="fa-solid fa-house"></i><span>Dashboard</span></a>
+    <a href="/builder" class="nav-link{% if active_page == 'builder' %} active{% endif %}"><i class="fa-solid fa-wand-magic-sparkles"></i><span>Nexus Flow</span></a>
+    <a href="/preview" class="nav-link{% if active_page == 'preview' %} active{% endif %}"><i class="fa-solid fa-desktop"></i><span>Website Preview</span></a>
+    <a href="/code-editor" class="nav-link{% if active_page == 'code-editor' %} active{% endif %}"><i class="fa-solid fa-file-code"></i><span>Code Editor</span></a>
+    <a href="/website-ai" class="nav-link{% if active_page == 'website-ai' %} active{% endif %}"><i class="fa-solid fa-robot"></i><span>Website Modifier AI</span></a>
+    <a href="/projects" class="nav-link"><i class="fa-solid fa-folder"></i><span>My Projects</span></a>
+    <a href="/downloads" class="nav-link"><i class="fa-solid fa-download"></i><span>Downloads</span></a>
+    <a href="/profile" class="nav-link"><i class="fa-solid fa-user"></i><span>Profile</span></a>
+    <a href="/settings" class="nav-link"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
+    <a href="/admin" class="nav-link"><i class="fa-solid fa-shield-halved"></i><span>Admin Control</span></a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <a href="/" class="nav-link"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></a>
+  </div>
+</aside>

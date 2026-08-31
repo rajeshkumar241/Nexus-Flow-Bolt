@@ -1,0 +1,687 @@
+{% extends "base.html" %}
+{% set active_page = 'builder' %}
+
+{% block title %}AI Website Builder | Nexus Flow{% endblock %}
+{% block page_title %}AI Builder{% endblock %}
+
+{% block extra_css %}
+<link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/builder-v2.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/live-preview.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/live-website-preview.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/figma.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="nb-shell" id="nbShell">
+
+    <!-- =========================================================
+         LANDING VIEW: Initial AI Builder Screen
+         ========================================================= -->
+    <div id="nbLandingView" class="nb-landing">
+        <div class="nb-landing-grid-bg"></div>
+        <div class="nb-landing-glow nb-landing-glow-1"></div>
+        <div class="nb-landing-glow nb-landing-glow-2"></div>
+        <div class="nb-landing-inner">
+
+            <!-- AI Status Badge -->
+            <div class="nb-landing-status">
+                <span class="nb-landing-status-dot"></span>
+                <span>Nexus AI Ready</span>
+                <span class="nb-landing-status-sep"></span>
+                <span class="nb-landing-status-provider">Gemini Connected</span>
+            </div>
+
+            <!-- Hero -->
+            <div class="nb-landing-brand">
+                <div class="nb-landing-logo">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                </div>
+                <h1 class="nb-landing-headline">Turn your <span class="nb-hl">ideas</span> into websites with <span class="nb-hl">AI</span></h1>
+                <p class="nb-landing-desc">Describe your idea and Nexus AI will generate a complete production-ready website in seconds.</p>
+            </div>
+
+            <!-- Prompt Card -->
+            <div class="nb-landing-prompt-card">
+                <div class="nb-landing-prompt-inner">
+                    <textarea id="nbLandingPrompt" class="nb-landing-textarea" rows="4" maxlength="2000"
+                              placeholder="Create a premium SaaS website with pricing, dashboard preview, testimonials and authentication."></textarea>
+                    <div class="nb-landing-tools">
+                        <div class="nb-landing-chips" id="nbLandingChips">
+                            <button type="button" class="nb-chip" data-prompt="Create a modern developer portfolio website with hero section, about section, skills, projects showcase, experience timeline, testimonials, contact form, and responsive navigation."><i class="fa-solid fa-briefcase"></i> Portfolio</button>
+                            <button type="button" class="nb-chip" data-prompt="Create a premium SaaS website with pricing, dashboard preview, testimonials and authentication."><i class="fa-solid fa-cloud"></i> SaaS</button>
+                            <button type="button" class="nb-chip" data-prompt="Create a premium restaurant website with menu pages, online reservation system, food gallery, chef section, reviews, location map, and contact page."><i class="fa-solid fa-utensils"></i> Restaurant</button>
+                            <button type="button" class="nb-chip" data-prompt="Create a complete ecommerce website with product catalog, product cards, categories, cart, checkout, user account, wishlist, and payment flow."><i class="fa-solid fa-cart-shopping"></i> E-commerce</button>
+                            <button type="button" class="nb-chip" data-prompt="Create a creative digital agency website with services, portfolio, case studies, team section, testimonials, and contact page."><i class="fa-solid fa-rocket"></i> Agency</button>
+                            <button type="button" class="nb-chip" data-prompt="Create a modern analytics dashboard application with metrics overview, charts, activity feed, user management, and dark mode interface."><i class="fa-solid fa-chart-pie"></i> Dashboard</button>
+                        </div>
+                    </div>
+                    <div class="nb-landing-bottom">
+                        <p class="nb-landing-hint"><i class="fa-solid fa-keyboard"></i> Ctrl + Enter</p>
+                        <button type="button" id="nbLandingGenerateBtn" class="nb-landing-generate-btn" title="Generate website">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                            <span class="nb-landing-btn-text">Generate Website</span>
+                            <span class="nb-landing-btn-loading" style="display:none;"><i class="fa-solid fa-spinner fa-spin"></i> Generating...</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature Cards -->
+            <div class="nb-landing-features">
+                <div class="nb-landing-feature">
+                    <div class="nb-landing-feat-icon"><i class="fa-solid fa-bolt"></i></div>
+                    <div>
+                        <span class="nb-landing-feat-title">Instant Generation</span>
+                        <span class="nb-landing-feat-desc">Full website in seconds</span>
+                    </div>
+                </div>
+                <div class="nb-landing-feature">
+                    <div class="nb-landing-feat-icon"><i class="fa-solid fa-code"></i></div>
+                    <div>
+                        <span class="nb-landing-feat-title">Clean Code</span>
+                        <span class="nb-landing-feat-desc">Production-ready output</span>
+                    </div>
+                </div>
+                <div class="nb-landing-feature">
+                    <div class="nb-landing-feat-icon"><i class="fa-solid fa-palette"></i></div>
+                    <div>
+                        <span class="nb-landing-feat-title">Modern Design</span>
+                        <span class="nb-landing-feat-desc">Premium UI aesthetics</span>
+                    </div>
+                </div>
+                <div class="nb-landing-feature">
+                    <div class="nb-landing-feat-icon"><i class="fa-solid fa-mobile-screen"></i></div>
+                    <div>
+                        <span class="nb-landing-feat-title">Responsive</span>
+                        <span class="nb-landing-feat-desc">Mobile-first layouts</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         BUILDER WORKSPACE: Shown after first generation
+         ========================================================= -->
+    <div id="nbBuilderWorkspace" class="nb-builder-workspace" style="display:none;">
+
+        <!-- TOP BAR -->
+        <header class="nb-topbar">
+            <div class="nb-topbar-center">
+                <i class="fa-solid fa-globe nb-proj-icon"></i>
+                <input id="nbProjectName" class="nb-project-name" type="text" value="My AI Website"
+                       placeholder="Untitled project" maxlength="80" spellcheck="false">
+            </div>
+            <div class="nb-topbar-actions">
+                <button id="nbSaveBtn" class="nb-btn nb-btn-ghost" title="Save project to your account">
+                    <i class="fa-solid fa-floppy-disk"></i><span>Save</span>
+                </button>
+                <button id="nbSaveVersionBtn" class="nb-btn nb-btn-ghost" title="Save a new version of this project">
+                    <i class="fa-solid fa-code-branch"></i><span>Save Version</span>
+                </button>
+                <button id="nbVersionsBtn" class="nb-btn nb-btn-ghost" title="View version history">
+                    <i class="fa-solid fa-clock-rotate-left"></i><span>History</span>
+                </button>
+                <button id="nbPreviewBtn" class="nb-btn nb-btn-ghost" title="Open a live preview in a new tab">
+                    <i class="fa-solid fa-eye"></i><span>Preview</span>
+                </button>
+                <button id="nbDownloadBtn" class="nb-btn nb-btn-primary" title="Download the full project as a ZIP">
+                    <i class="fa-solid fa-download"></i><span>Download ZIP</span>
+                </button>
+                <button id="nbDeployBtn" class="nb-btn nb-btn-ghost" title="Download a deployment-ready bundle">
+                    <i class="fa-solid fa-rocket"></i><span>Deploy</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- HORIZONTAL WORKSPACE TABS -->
+        <div class="nb-workspace-tabs">
+            <button class="nb-ws-tab active" data-mode="workflow" title="AI Workflow">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <span>Build</span>
+            </button>
+            <button class="nb-ws-tab" data-mode="code" title="Code Editor">
+                <i class="fa-solid fa-code"></i>
+                <span>Code</span>
+            </button>
+            <button class="nb-ws-tab" data-mode="quality" title="Code Quality Analyzer">
+                <i class="fa-solid fa-shield-halved"></i>
+                <span>Quality</span>
+            </button>
+            <button class="nb-ws-tab" data-mode="activity" title="AI Developer Activity Feed">
+                <i class="fa-solid fa-bolt"></i>
+                <span>Activity</span>
+            </button>
+        </div>
+
+        <!-- MAIN BODY -->
+        <div class="nb-body">
+
+            <!-- CENTER: Workspace -->
+            <div class="nb-workspace">
+
+                <!-- Workflow Pane -->
+                <section id="nbWorkflowPane" class="nb-pane active">
+                    <div class="nb-chat-head">
+                        <h2 class="nb-pane-title"><i class="fa-solid fa-wand-magic-sparkles"></i> Nexus Flow AI Builder</h2>
+                        <div class="nb-chat-head-right">
+                            <span class="nb-ai-status" id="nbAiStatus"><span class="nb-ai-dot"></span>Online</span>
+                            <span class="nb-model-badge" id="nbModelBadge">poolside/laguna-s-2.1:free</span>
+                            <button type="button" id="nbProviderBtn" class="nb-provider-btn" title="Manage AI provider">
+                                <i class="fa-solid fa-server"></i><span>AI Provider</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="nbChatHistory" class="nb-chat-history">
+                        <div class="nb-bubble nb-bubble-ai">
+                            <div class="nb-bubble-avatar"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                            <div class="nb-bubble-body">
+                                <div class="nb-bubble-name">Nexus AI</div>
+                                <p>Describe your website and I'll analyze requirements, create a plan, design the UI, and generate production-quality code.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="nb-prompt-area">
+                        <div class="nb-prompt-box">
+                            <textarea id="nbPrompt" rows="3" maxlength="2000"
+                                      placeholder="Create a premium SaaS website with pricing, dashboard preview, testimonials and authentication."></textarea>
+                            <div class="nb-prompt-tools">
+                                <div class="nb-prompt-chips" id="nbPromptChips">
+                                    <button type="button" class="nb-chip" data-prompt="Create a modern developer portfolio website with hero section, about section, skills, projects showcase, experience timeline, testimonials, contact form, and responsive navigation."><i class="fa-solid fa-briefcase"></i> Portfolio</button>
+                                    <button type="button" class="nb-chip" data-prompt="Create a premium SaaS website with pricing, dashboard preview, testimonials and authentication."><i class="fa-solid fa-cloud"></i> SaaS</button>
+                                    <button type="button" class="nb-chip" data-prompt="Create a premium restaurant website with menu pages, online reservation system, food gallery, chef section, reviews, location map, and contact page."><i class="fa-solid fa-utensils"></i> Restaurant</button>
+                                    <button type="button" class="nb-chip" data-prompt="Create a complete ecommerce website with product catalog, product cards, categories, cart, checkout, user account, wishlist, and payment flow."><i class="fa-solid fa-cart-shopping"></i> E-commerce</button>
+                                    <button type="button" class="nb-chip" data-prompt="Create a creative digital agency website with services, portfolio, case studies, team section, testimonials, and contact page."><i class="fa-solid fa-rocket"></i> Agency</button>
+                                    <button type="button" class="nb-chip" data-prompt="Create a modern analytics dashboard application with metrics overview, charts, activity feed, user management, and dark mode interface."><i class="fa-solid fa-chart-pie"></i> Dashboard</button>
+                                    <button type="button" class="nb-chip nb-chip-figma" id="nbFigmaImportBtn" title="Import from Figma"><i class="fa-brands fa-figma"></i> Import Figma</button>
+                                </div>
+                                <div class="nb-prompt-actions">
+                                    <select id="nbGenMode" class="nb-gen-mode-select" title="Generation mode">
+                                        <option value="fast">Fast Mode</option>
+                                        <option value="balanced" selected>Balanced</option>
+                                        <option value="quality">Quality</option>
+                                    </select>
+                                    <button id="nbSendBtn" class="nb-send-btn" title="Send (Ctrl+Enter)">
+                                        <span>Generate</span>
+                                        <i class="fa-solid fa-arrow-up"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="nb-prompt-hint"><i class="fa-solid fa-keyboard"></i> Ctrl + Enter to send &nbsp;&middot;&nbsp; First message builds your site, later messages refine it.</p>
+                    </div>
+                </section>
+
+                <!-- Code Pane -->
+                <section id="nbCodePane" class="nb-pane">
+                    <div class="nb-code-layout">
+                        <aside class="nb-filetree">
+                            <div class="nb-filetree-head">
+                                <span><i class="fa-solid fa-folder-tree"></i> Explorer</span>
+                                <button id="nbAddFileBtn" class="nb-tree-action" title="Add a new file">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
+                            <div id="nbFileTree" class="nb-filetree-body"></div>
+                            <div class="nb-filetree-foot">
+                                <span id="nbFileCount"></span>
+                            </div>
+                        </aside>
+                        <div class="nb-editor">
+                            <div class="nb-editor-tabs" id="nbEditorTabs"></div>
+                            <div class="nb-editor-toolbar">
+                                <span id="nbActiveFileName" class="nb-active-file">index.html</span>
+                                <div class="nb-editor-toolbar-right">
+                                    <button id="nbEditToggleBtn" class="nb-mini-btn" title="Edit active file"><i class="fa-solid fa-pencil"></i> Edit</button>
+                                    <button id="nbSaveCodeBtn" class="nb-mini-btn" title="Save changes"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+                                    <button id="nbCopyCodeBtn" class="nb-mini-btn" title="Copy active file to clipboard"><i class="fa-solid fa-copy"></i> Copy</button>
+                                    <button id="nbFormatBtn" class="nb-mini-btn" title="Format code"><i class="fa-solid fa-align-left"></i> Format</button>
+                                    <button id="nbRenameFileBtn" class="nb-mini-btn" title="Rename file"><i class="fa-solid fa-pen-to-square"></i></button>
+                                    <button id="nbDeleteFileBtn" class="nb-mini-btn nb-danger" title="Delete file"><i class="fa-solid fa-trash"></i></button>
+                                </div>
+                            </div>
+                            <!-- Monaco Editor -->
+                            <div id="nbMonaco" class="nb-monaco"></div>
+                            <div id="nbFallbackEditor" class="nb-fallback-editor" style="display:none;">
+                                <textarea id="nbFallbackTextarea" class="nb-fallback-textarea" spellcheck="false"></textarea>
+                            </div>
+                            <!-- Live Code Streaming Overlay (shown during generation) -->
+                            <div id="nbLivePreviewOverlay" class="nb-live-overlay" style="display:none;">
+                                <div id="nbLivePreviewMount" class="lc-live-container"></div>
+                            </div>
+                            <div class="nb-editor-statusbar">
+                                <span id="nbStatusLanguage"><i class="fa-solid fa-code"></i> HTML</span>
+                                <span id="nbStatusLn">Ln 1, Col 1</span>
+                                <span class="nb-unsaved" id="nbUnsavedBadge" style="display:none;"><i class="fa-solid fa-circle"></i> Unsaved</span>
+                                <span class="nb-spacer"></span>
+                                <button id="nbApplyCodeBtn" class="nb-btn nb-btn-primary nb-apply-btn" title="Apply changes to preview">
+                                    <i class="fa-solid fa-play"></i><span>Apply Changes to Preview</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Quality Pane -->
+                <section id="nbQualityPane" class="nb-pane">
+                    <div class="nb-chat-head">
+                        <h2 class="nb-pane-title"><i class="fa-solid fa-shield-halved"></i> Code Quality</h2>
+                        <span class="nb-ai-status"><span class="nb-ai-dot"></span>ML Powered</span>
+                    </div>
+                    <div class="nb-quality-body">
+                        <div class="nb-quality-summary">
+                            <div class="nb-quality-score-card">
+                                <div class="nb-quality-score" id="nbQualityScore">--</div>
+                                <div class="nb-quality-level" id="nbQualityLevel">Not analyzed</div>
+                                <div class="nb-quality-conf" id="nbQualityConf"></div>
+                            </div>
+                            <div class="nb-quality-actions">
+                                <button id="nbAnalyzeBtn" class="nb-btn nb-btn-primary">
+                                    <i class="fa-solid fa-microscope"></i><span>Analyze Code</span>
+                                </button>
+                                <div class="nb-improve-row">
+                                    <select id="nbQualityFocus" class="nb-quality-focus" title="Focus area">
+                                        <option value="">All quality issues</option>
+                                        <option value="accessibility">Accessibility</option>
+                                        <option value="semantics">Semantics / SEO</option>
+                                        <option value="performance">Performance</option>
+                                        <option value="maintainability">Maintainability</option>
+                                        <option value="best practices">Best practices</option>
+                                    </select>
+                                    <button id="nbImproveBtn" class="nb-btn nb-btn-ghost" title="Ask AI to fix issues">
+                                        <i class="fa-solid fa-wand-magic-sparkles"></i><span>Improve with AI</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="nbQualityCompare" class="nb-quality-compare" style="display:none;"></div>
+                        <div class="nb-quality-sections" id="nbQualitySections"></div>
+                        <div class="nb-quality-issues-head"><i class="fa-solid fa-list-check"></i> Detected Issues</div>
+                        <div id="nbQualityIssues" class="nb-quality-issues">
+                            <p class="nb-quality-empty">Run an analysis to see the detected issues.</p>
+                        </div>
+                        <p id="nbQualityMeta" class="nb-quality-meta"></p>
+                    </div>
+                </section>
+
+                <!-- Activity Pane (AI Autonomous Engineer Feed) -->
+                <section id="nbActivityPane" class="nb-pane">
+                    <div class="nb-chat-head">
+                        <h2 class="nb-pane-title"><i class="fa-solid fa-bolt"></i> AI Development Activity</h2>
+                        <div class="nb-chat-head-right">
+                            <span class="nb-ai-status"><span class="nb-ai-dot"></span>Autonomous Engineer Active</span>
+                            <button id="nbRunAutoDevBtn" class="nb-btn nb-btn-primary" style="padding:0.35rem 0.75rem;font-size:0.8rem;" title="Run full autonomous development loop">
+                                <i class="fa-solid fa-play"></i><span>Run Autonomous Loop</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="nb-activity-body">
+                        <!-- Live Workflow Progress Tracker -->
+                        <div class="nb-activity-stepper" id="nbActivityStepper">
+                            <div class="nb-step-chip" data-step="analyze"><i class="fa-solid fa-magnifying-glass"></i> Analyzing</div>
+                            <div class="nb-step-chip" data-step="plan"><i class="fa-solid fa-sitemap"></i> Planning</div>
+                            <div class="nb-step-chip" data-step="design"><i class="fa-solid fa-palette"></i> Designing</div>
+                            <div class="nb-step-chip" data-step="code"><i class="fa-solid fa-code"></i> Coding</div>
+                            <div class="nb-step-chip" data-step="execute"><i class="fa-solid fa-terminal"></i> Executing</div>
+                            <div class="nb-step-chip" data-step="test"><i class="fa-solid fa-flask"></i> Testing</div>
+                            <div class="nb-step-chip" data-step="debug"><i class="fa-solid fa-bug"></i> Debugging</div>
+                            <div class="nb-step-chip" data-step="fix"><i class="fa-solid fa-wrench"></i> Self-Healing</div>
+                            <div class="nb-step-chip" data-step="quality"><i class="fa-solid fa-star"></i> Quality</div>
+                        </div>
+
+                        <!-- Activity Timeline / Feed -->
+                        <div class="nb-activity-feed-head">
+                            <span><i class="fa-solid fa-list-timeline"></i> Activity Timeline</span>
+                            <span id="nbActivityStats" class="nb-activity-stats">0 actions recorded</span>
+                        </div>
+                        <div id="nbActivityTimeline" class="nb-activity-timeline">
+                            <div class="nb-activity-item info">
+                                <div class="nb-act-icon"><i class="fa-solid fa-circle-info"></i></div>
+                                <div class="nb-act-content">
+                                    <div class="nb-act-title">AI Software Engineer Ready</div>
+                                    <div class="nb-act-desc">Nexus Flow autonomous loop is ready to plan, code, execute, test, and self-heal your website.</div>
+                                    <div class="nb-act-time">Ready</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- RIGHT: Live Preview -->
+            <div class="nb-preview">
+                <div class="nb-preview-toolbar">
+                    <div class="nb-devices">
+                        <button class="nb-device-btn active" data-device="desktop" title="Desktop (1440px)">
+                            <i class="fa-solid fa-desktop"></i>
+                        </button>
+                        <button class="nb-device-btn" data-device="tablet" title="Tablet (768px)">
+                            <i class="fa-solid fa-tablet-screen-button"></i>
+                        </button>
+                        <button class="nb-device-btn" data-device="mobile" title="Mobile (390px)">
+                            <i class="fa-solid fa-mobile-screen-button"></i>
+                        </button>
+                    </div>
+                    <div class="nb-preview-actions">
+                        <button id="nbRefreshPreviewBtn" class="nb-icon-btn" title="Refresh preview">
+                            <i class="fa-solid fa-rotate"></i>
+                        </button>
+                        <button id="nbOpenPreviewBtn" class="nb-icon-btn" title="Open preview in new tab">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="nb-preview-stage" id="nbPreviewStage">
+                    <iframe id="nbPreviewFrame" title="Live Website Preview"
+                            sandbox="allow-scripts allow-forms allow-popups allow-modals allow-downloads allow-presentation"></iframe>
+                    <div id="nbPreviewEmpty" class="nb-preview-empty">
+                        <i class="fa-solid fa-globe"></i>
+                        <p>Your live preview will appear here.<br>Describe your website to get started.</p>
+                    </div>
+                    <!-- Generating state overlay inside preview -->
+                    <div id="nbPreviewGenerating" class="nb-preview-generating" style="display:none;">
+                        <div class="nb-pgen-skeleton">
+                            <div class="nb-pgen-skel-nav"><div class="nb-pgen-skel-bar w80"></div><div class="nb-pgen-skel-bar w40"></div></div>
+                            <div class="nb-pgen-skel-hero">
+                                <div class="nb-pgen-skel-line w60 h2"></div>
+                                <div class="nb-pgen-skel-line w90 h1"></div>
+                                <div class="nb-pgen-skel-line w40 h1"></div>
+                            </div>
+                            <div class="nb-pgen-skel-cards">
+                                <div class="nb-pgen-skel-card"><div class="nb-pgen-skel-bar w100"></div><div class="nb-pgen-skel-bar w70"></div></div>
+                                <div class="nb-pgen-skel-card"><div class="nb-pgen-skel-bar w100"></div><div class="nb-pgen-skel-bar w60"></div></div>
+                                <div class="nb-pgen-skel-card"><div class="nb-pgen-skel-bar w100"></div><div class="nb-pgen-skel-bar w80"></div></div>
+                            </div>
+                        </div>
+                        <div class="nb-pgen-status">
+                            <div class="nb-pgen-status-head">
+                                <div class="nb-pgen-status-dot"></div>
+                                <span id="nbPreviewGenTitle">Nexus AI is designing your website</span>
+                            </div>
+                            <p id="nbPreviewGenStep" style="font-size:13px;color:#94a3b8;margin:8px 0 4px;">Step 1/8: Analyzing prompt...</p>
+                            <div class="nb-pgen-status-steps">
+                                <div class="nb-pgen-step active" data-step="1">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                    <span>Understanding requirements</span>
+                                </div>
+                                <div class="nb-pgen-step" data-step="2">
+                                    <i class="fa-solid fa-compass-drafting"></i>
+                                    <span>Designing user experience</span>
+                                </div>
+                                <div class="nb-pgen-step" data-step="3">
+                                    <i class="fa-solid fa-layer-group"></i>
+                                    <span>Selecting design patterns</span>
+                                </div>
+                                <div class="nb-pgen-step" data-step="4">
+                                    <i class="fa-solid fa-palette"></i>
+                                    <span>Creating design system</span>
+                                </div>
+                                <div class="nb-pgen-step" data-step="5">
+                                    <i class="fa-solid fa-sitemap"></i>
+                                    <span>Planning pages</span>
+                                </div>
+                                <div class="nb-pgen-step" data-step="6">
+                                    <i class="fa-solid fa-puzzle-piece"></i>
+                                    <span>Creating components</span>
+                                </div>
+                                <div class="nb-pgen-step" data-step="7">
+                                    <i class="fa-solid fa-code"></i>
+                                    <span>Writing code</span>
+                                </div>
+                                <div class="nb-pgen-step" data-step="8">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                    <span>Reviewing visual quality</span>
+                                </div>
+                                <div class="nb-pgen-step" data-step="9">
+                                    <i class="fa-solid fa-eye"></i>
+                                    <span>Preparing preview</span>
+                                </div>
+                            </div>
+                            <button type="button" id="nbStopGenerationBtnPreview" class="nb-btn nb-btn-ghost" style="margin-top:12px;border-color:#ef4444;color:#ef4444;" title="Stop generation">
+                                <i class="fa-solid fa-stop"></i><span> Stop Generation</span>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Completion notification inside preview -->
+                    <div id="nbPreviewDone" class="nb-preview-done" style="display:none;">
+                        <div class="nb-pgen-done-card">
+                            <i class="fa-solid fa-circle-check"></i>
+                            <span>Website generated successfully</span>
+                            <div class="nb-pgen-done-actions">
+                                <a href="/code" class="nb-btn nb-btn-sm nb-btn-ghost"><i class="fa-solid fa-code"></i> View Code</a>
+                                <button class="nb-btn nb-btn-sm nb-btn-primary" onclick="document.querySelector('#nbPrompt').focus()"><i class="fa-solid fa-pen"></i> Edit Website</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Error state inside preview -->
+                    <div id="nbPreviewError" class="nb-preview-error" style="display:none;">
+                        <div class="nb-pgen-err-card">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                            <span id="nbPreviewErrMsg">Design generation failed</span>
+                            <div class="nb-pgen-done-actions">
+                                <button class="nb-btn nb-btn-sm nb-btn-ghost" id="nbPreviewRetryBtn"><i class="fa-solid fa-rotate"></i> Retry</button>
+                                <button class="nb-btn nb-btn-sm nb-btn-primary" id="nbPreviewEditPromptBtn"><i class="fa-solid fa-pen"></i> Edit Prompt</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- end nbBuilderWorkspace -->
+</div><!-- end nbShell -->
+
+<!-- =========================================================
+     OVERLAYS / TOASTS (kept for version modals only)
+     ========================================================= -->
+<div id="nbLoadingOverlay" class="nb-loading-overlay" style="display:none;">
+    <div class="nb-loading-card">
+        <div class="nb-spinner"></div>
+        <h3 id="nbLoadingTitle">Building your website...</h3>
+        <p id="nbLoadingSub">Our AI is crafting a beautiful site tailored to your request</p>
+        <p id="nbLoadingStep" style="margin-top:8px;font-size:13px;color:#94a3b8;">Step 1/8: Analyzing prompt...</p>
+        <button type="button" id="nbStopGenerationBtn" class="nb-btn nb-btn-ghost" style="margin-top:16px;border-color:#ef4444;color:#ef4444;" title="Stop generation">
+            <i class="fa-solid fa-stop"></i><span> Stop Generation</span>
+        </button>
+    </div>
+</div>
+
+<div id="nbToast" class="nb-toast"><i class="fa-solid fa-circle-check"></i><span id="nbToastMsg"></span></div>
+
+<!-- VERSION HISTORY MODAL -->
+<div id="nbVersionsModal" class="nb-modal-overlay" style="display:none;">
+    <div class="nb-modal-card">
+        <div class="nb-modal-header">
+            <h3><i class="fa-solid fa-clock-rotate-left"></i> Version History</h3>
+            <button type="button" class="nb-modal-close" data-close-versions title="Close"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="nb-modal-body">
+            <p class="nb-versions-hint">Restoring a version updates your current project.</p>
+            <div id="nbVersionsList" class="nb-versions-list">
+                <div class="nb-versions-empty">No versions yet.</div>
+            </div>
+        </div>
+        <div class="nb-modal-footer">
+            <button type="button" class="nb-btn nb-btn-ghost" data-close-versions>Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- RESTORE CONFIRMATION MODAL -->
+<div id="nbRestoreModal" class="nb-modal-overlay" style="display:none;">
+    <div class="nb-modal-card nb-modal-small">
+        <div class="nb-modal-header">
+            <h3><i class="fa-solid fa-rotate-left"></i> Restore Version</h3>
+            <button type="button" class="nb-modal-close" data-close-restore title="Close"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="nb-modal-body">
+            <p id="nbRestoreText" class="nb-restore-text">Restore this version?</p>
+            <p class="nb-restore-warn">Your current unsaved work will be replaced.</p>
+        </div>
+        <div class="nb-modal-footer">
+            <button type="button" class="nb-btn nb-btn-ghost" data-close-restore>Cancel</button>
+            <button type="button" id="nbRestoreConfirmBtn" class="nb-btn nb-btn-primary">Restore</button>
+        </div>
+    </div>
+</div>
+
+<input type="file" id="nbNewFileInput" accept=".html,.css,.js,.json,.md" style="display:none;">
+
+<!-- NEW FILE MODAL -->
+<div id="nbNewFileModal" class="nb-modal-overlay" style="display:none;">
+    <div class="nb-modal-card nb-modal-small">
+        <div class="nb-modal-header">
+            <h3><i class="fa-solid fa-file-circle-plus"></i> Create New File</h3>
+            <button type="button" class="nb-modal-close" data-close-newfile title="Close"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="nb-modal-body">
+            <div class="nb-field">
+                <label for="nbNewFileNameInput"><i class="fa-solid fa-file"></i> File name</label>
+                <input type="text" id="nbNewFileNameInput" class="nb-input" spellcheck="false" autocomplete="off" placeholder="e.g. about.html">
+            </div>
+            <div class="nb-field">
+                <label for="nbNewFileTypeSelect"><i class="fa-solid fa-code"></i> File type</label>
+                <select id="nbNewFileTypeSelect" class="nb-select">
+                    <option value="html">HTML</option>
+                    <option value="css">CSS</option>
+                    <option value="javascript">JavaScript</option>
+                    <option value="json">JSON</option>
+                    <option value="markdown">Markdown</option>
+                    <option value="plaintext">Text</option>
+                </select>
+            </div>
+        </div>
+        <div class="nb-modal-footer">
+            <button type="button" class="nb-btn nb-btn-ghost" data-close-newfile>Cancel</button>
+            <button type="button" id="nbNewFileCreateBtn" class="nb-btn nb-btn-primary"><i class="fa-solid fa-plus"></i><span>Create</span></button>
+        </div>
+    </div>
+</div>
+
+<!-- AI PROVIDER SETTINGS MODAL -->
+<div id="nbProviderModal" class="nb-modal-overlay" style="display:none;">
+    <div class="nb-modal-card nb-provider-card">
+        <div class="nb-modal-header">
+            <h3><i class="fa-solid fa-server"></i> AI Provider Settings</h3>
+            <button type="button" class="nb-modal-close" data-close-provider title="Close"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="nb-modal-body">
+            <div class="nb-provider-current">
+                <span class="nb-provider-current-label">Current AI provider</span>
+                <span id="nbProviderCurrent" class="nb-provider-current-chip"><i class="fa-solid fa-circle-check"></i> OpenRouter</span>
+                <span id="nbCurrentModel" class="nb-provider-model-tag">poolside/laguna-s-2.1:free</span>
+            </div>
+            <div class="nb-field">
+                <label for="nbProviderSelect"><i class="fa-solid fa-chevron-circle-down"></i> Provider</label>
+                <select id="nbProviderSelect" class="nb-select"><option value="">Select a provider...</option></select>
+            </div>
+            <div class="nb-field">
+                <label for="nbModelSelect"><i class="fa-solid fa-microchip"></i> Model</label>
+                <select id="nbModelSelect" class="nb-select"><option value="">Select a model...</option></select>
+            </div>
+            <div class="nb-field" id="nbApiKeyField">
+                <label for="nbApiKeyInput"><i class="fa-solid fa-key"></i> API Key</label>
+                <input type="password" id="nbApiKeyInput" class="nb-input" autocomplete="off" placeholder="Paste your API key">
+                <p class="nb-field-hint" id="nbApiKeyHint">Required for this provider.</p>
+            </div>
+            <div id="nbTestResult" class="nb-test-result" style="display:none;"></div>
+        </div>
+        <div class="nb-modal-footer">
+            <button type="button" id="nbTestConnBtn" class="nb-btn nb-btn-ghost"><i class="fa-solid fa-plug"></i><span>Test Connection</span></button>
+            <button type="button" id="nbSaveProviderBtn" class="nb-btn nb-btn-primary"><i class="fa-solid fa-floppy-disk"></i><span>Save</span></button>
+        </div>
+    </div>
+</div>
+
+<!-- Figma Import Modal -->
+<div id="nbFigmaModal" class="nb-modal-overlay" style="display:none;">
+    <div class="nb-modal-card nb-figma-modal">
+        <div class="nb-modal-header">
+            <h3><i class="fa-brands fa-figma"></i> Import Figma Design</h3>
+            <button type="button" class="nb-modal-close" onclick="closeFigmaModal()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="nb-modal-body">
+            <div id="nbFigmaInputStep">
+                <p class="nb-figma-desc">Paste your Figma file URL to analyze the design and generate a website from it.</p>
+                <div class="nb-figma-url-input">
+                    <input type="text" id="nbFigmaUrl" placeholder="Paste your Figma file URL" class="nb-input">
+                </div>
+                <div id="nbFigmaNotConnected" class="nb-figma-warning" style="display:none;">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span>Figma not connected. <a href="/settings?tab=tab-integrations">Connect in Settings</a></span>
+                </div>
+                <div class="nb-figma-actions" style="margin-bottom:0;">
+                    <button type="button" id="nbFigmaConnectBtn" class="nb-btn nb-btn-ghost" onclick="window.location.href='/api/figma/connect'">
+                        <i class="fa-brands fa-figma"></i><span>Connect Figma</span>
+                    </button>
+                    <button type="button" id="nbFigmaAnalyzeBtn" class="nb-btn nb-btn-primary" onclick="analyzeFigmaDesign()">
+                        <i class="fa-solid fa-magnifying-glass"></i><span>Analyze Design</span>
+                    </button>
+                </div>
+            </div>
+            <div id="nbFigmaResultStep" style="display:none;">
+                <div class="nb-figma-result-header">
+                    <i class="fa-solid fa-circle-check nb-figma-success-icon"></i>
+                    <div>
+                        <h4 id="nbFigmaFileName">Untitled</h4>
+                        <p id="nbFigmaFileMeta" class="nb-figma-meta"></p>
+                    </div>
+                </div>
+                <div class="nb-figma-details">
+                    <div class="nb-figma-detail-row">
+                        <span class="nb-figma-label"><i class="fa-solid fa-layer-group"></i> Pages</span>
+                        <span id="nbFigmaPages" class="nb-figma-value">-</span>
+                    </div>
+                    <div class="nb-figma-detail-row">
+                        <span class="nb-figma-label"><i class="fa-solid fa-puzzle-piece"></i> Components</span>
+                        <span id="nbFigmaComponents" class="nb-figma-value">-</span>
+                    </div>
+                    <div class="nb-figma-detail-row">
+                        <span class="nb-figma-label"><i class="fa-solid fa-palette"></i> Colors</span>
+                        <div id="nbFigmaColors" class="nb-figma-colors"></div>
+                    </div>
+                    <div class="nb-figma-detail-row">
+                        <span class="nb-figma-label"><i class="fa-solid fa-font"></i> Typography</span>
+                        <span id="nbFigmaTypography" class="nb-figma-value">-</span>
+                    </div>
+                    <div class="nb-figma-detail-row">
+                        <span class="nb-figma-label"><i class="fa-solid fa-wand-magic-sparkles"></i> Style</span>
+                        <span id="nbFigmaStyle" class="nb-figma-value">-</span>
+                    </div>
+                </div>
+                <div class="nb-figma-name-input">
+                    <label>Website Name</label>
+                    <input type="text" id="nbFigmaSiteName" placeholder="My Figma Website" class="nb-input">
+                </div>
+                <div class="nb-figma-actions">
+                    <button type="button" class="nb-btn nb-btn-ghost" onclick="closeFigmaModal()">Cancel</button>
+                    <button type="button" id="nbFigmaGenerateBtn" class="nb-btn nb-btn-primary" onclick="generateFromFigma()">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i><span>Generate Website</span>
+                    </button>
+                </div>
+            </div>
+            <div id="nbFigmaLoadingStep" style="display:none;">
+                <div class="nb-figma-loading">
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+                    <p id="nbFigmaLoadingText">Analyzing Figma design...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    window.__INITIAL_PROJECT_ID = "{{ initial_project_id or '' }}";
+</script>
+<script src="/static/vendor/monaco/min/vs/loader.js"></script>
+<script src="{{ url_for('static', filename='js/preview-store.js') }}"></script>
+<script src="{{ url_for('static', filename='js/live-preview.js') }}"></script>
+<script src="{{ url_for('static', filename='js/builder-v2.js') }}"></script>
+{% endblock %}

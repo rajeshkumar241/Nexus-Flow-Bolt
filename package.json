@@ -1,0 +1,20 @@
+{
+  "name": "nexus-flow",
+  "version": "1.0.0",
+  "description": "Nexus Flow is a Flask + MongoDB application that generates complete, static websites from natural-language prompts. Its AI engine is driven by **JARVIS** — a no-key agent that orchestrates the AI conversation system and dispatches all generation/modification/chat to the configured model engines (**LM Studio (Qwen2.5-Coder)** → **Ollama** → **Gemini** → OpenAI), with Gemini as the automatic fallback. It combines an AI chat-driven builder with a visual code editor, live preview, version history, downloads, ZIP/deploy export, dashboard, and admin console.",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.6.0",
+    "monaco-editor": "^0.45.0"
+  }
+}

@@ -1,0 +1,280 @@
+{% extends "base.html" %}
+{% set active_page = 'downloads' %}
+
+{% block title %}Downloads & Exports | Nexus Flow{% endblock %}
+{% block page_title %}Downloads{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/downloads.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="dl-page">
+
+    <!-- ═══════════════════════════════════════════════════════
+         HEADER CARD
+         ═══════════════════════════════════════════════════════ -->
+    <div class="dl-header">
+        <div class="dl-header-left">
+            <div class="dl-header-icon"><i class="fa-solid fa-cloud-arrow-down"></i></div>
+            <div>
+                <h1 class="dl-header-title">Downloads & Exports</h1>
+                <p class="dl-header-sub">Access your AI-generated websites, export files, and manage deployment packages.</p>
+            </div>
+        </div>
+        <div class="dl-header-actions">
+            <div class="dl-search">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="downloadSearch" placeholder="Search downloads...">
+            </div>
+            <div class="dl-filter-group">
+                <button class="dl-filter-btn active" data-filter="all">All</button>
+                <button class="dl-filter-btn" data-filter="zip">ZIP</button>
+                <button class="dl-filter-btn" data-filter="html">HTML</button>
+                <button class="dl-filter-btn" data-filter="deploy">Deploy</button>
+            </div>
+            {% if downloads and downloads|length > 0 %}
+            <button class="dl-btn dl-btn-ghost" id="clearHistoryBtn">
+                <i class="fa-solid fa-trash-can"></i><span>Clear History</span>
+            </button>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         AI EXPORT SUMMARY
+         ═══════════════════════════════════════════════════════ -->
+    <div class="dl-stats">
+        <div class="dl-stat-card">
+            <div class="dl-stat-icon dl-stat-blue"><i class="fa-solid fa-file-export"></i></div>
+            <div class="dl-stat-info">
+                <span class="dl-stat-num">{{ total_downloads }}</span>
+                <span class="dl-stat-label">Websites Exported</span>
+            </div>
+            <div class="dl-stat-badge"><i class="fa-solid fa-arrow-trend-up"></i> All time</div>
+        </div>
+        <div class="dl-stat-card">
+            <div class="dl-stat-icon dl-stat-purple"><i class="fa-solid fa-crown"></i></div>
+            <div class="dl-stat-info">
+                <span class="dl-stat-num dl-stat-truncate">{% if downloads and downloads|length > 0 %}{{ downloads[0].title }}{% else %}—{% endif %}</span>
+                <span class="dl-stat-label">Most Recent Export</span>
+            </div>
+            <div class="dl-stat-badge"><i class="fa-solid fa-star"></i> Top</div>
+        </div>
+        <div class="dl-stat-card">
+            <div class="dl-stat-icon dl-stat-green"><i class="fa-solid fa-rocket"></i></div>
+            <div class="dl-stat-info">
+                <span class="dl-stat-num">{{ storage_mb }} MB</span>
+                <span class="dl-stat-label">Storage Used</span>
+            </div>
+            <div class="dl-stat-bar">
+                <div class="dl-stat-bar-fill" data-storage-pct="{{ storage_pct|default(0, true) }}"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         QUICK PROJECT EXPORT
+         ═══════════════════════════════════════════════════════ -->
+    {% if projects and projects|length > 0 %}
+    <div class="dl-section">
+        <div class="dl-section-head">
+            <h2><i class="fa-solid fa-bolt-lightning"></i> Quick Project Export</h2>
+            <p>Export your saved projects into standalone HTML or complete ZIP archives.</p>
+        </div>
+
+        <div class="dl-export-grid">
+            {% for p in projects %}
+            <div class="dl-export-card" data-title="{{ p.title|lower }}" data-prompt="{{ p.prompt|lower }}">
+                <!-- Preview Thumbnail -->
+                <div class="dl-export-preview">
+                    <iframe src="/preview/{{ p._id_str }}" class="dl-export-thumb" loading="lazy" title="{{ p.title }}" sandbox="allow-scripts allow-forms allow-popups allow-modals" data-project-id="{{ p._id_str }}"></iframe>
+                    <div class="dl-export-preview-overlay">
+                        <span class="dl-export-preview-btn"><i class="fa-solid fa-expand"></i> Preview</span>
+                    </div>
+                    <div class="dl-export-badge"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Generated</div>
+                </div>
+
+                <!-- Card Body -->
+                <div class="dl-export-body">
+                    <div class="dl-export-top">
+                        <h3 class="dl-export-title">{{ p.title }}</h3>
+                        <span class="dl-export-category">Website</span>
+                    </div>
+                    <p class="dl-export-desc">{{ p.prompt|truncate(80) }}</p>
+                    <div class="dl-export-meta">
+                        <span><i class="fa-regular fa-calendar"></i> {{ p.updated_at_fmt if p.updated_at_fmt else 'Recently' }}</span>
+                        <span><i class="fa-solid fa-file-code"></i> 3 files</span>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="dl-export-actions">
+                    <a href="/download/zip/{{ p._id_str }}" class="dl-export-action dl-export-zip" title="Download ZIP">
+                        <i class="fa-solid fa-file-zipper"></i> ZIP
+                    </a>
+                    <a href="/download/html/{{ p._id_str }}" class="dl-export-action dl-export-html" title="Download HTML">
+                        <i class="fa-solid fa-file-code"></i> HTML
+                    </a>
+                    <a href="/download/deploy/{{ p._id_str }}" class="dl-export-action dl-export-deploy" title="Deploy">
+                        <i class="fa-solid fa-rocket"></i> Deploy
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- ═══════════════════════════════════════════════════════
+         DOWNLOAD HISTORY
+         ═══════════════════════════════════════════════════════ -->
+    <div class="dl-section">
+        <div class="dl-section-head">
+            <h2><i class="fa-solid fa-clock-rotate-left"></i> Download History</h2>
+            <p>Log of your previous ZIP and HTML file exports stored in MongoDB.</p>
+        </div>
+
+        {% if downloads and downloads|length > 0 %}
+        <div class="dl-table-wrap">
+            <table id="downloadTable" class="dl-table">
+                <thead>
+                    <tr>
+                        <th>File</th>
+                        <th>Export Type</th>
+                        <th>Size</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in downloads %}
+                    <tr id="row-{{ item._id_str }}" data-name="{{ item.file_name|lower }}" data-title="{{ item.title|lower }}" data-type="{{ item.file_type|lower|default('unknown', true) }}">
+                        <td>
+                            <div class="dl-file-cell">
+                                <div class="dl-file-icon {% if item.file_type and 'ZIP' in item.file_type %}dl-file-zip{% elif item.file_type and 'Deploy' in item.file_type %}dl-file-deploy{% else %}dl-file-html{% endif %}">
+                                    {% if item.file_type and 'ZIP' in item.file_type %}
+                                    <i class="fa-solid fa-file-zipper"></i>
+                                    {% elif item.file_type and 'Deploy' in item.file_type %}
+                                    <i class="fa-solid fa-rocket"></i>
+                                    {% else %}
+                                    <i class="fa-solid fa-file-code"></i>
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <div class="dl-file-name">{{ item.file_name }}</div>
+                                    <div class="dl-file-project">{{ item.title }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="dl-type-badge {% if item.file_type and 'ZIP' in item.file_type %}dl-type-zip{% elif item.file_type and 'Deploy' in item.file_type %}dl-type-deploy{% else %}dl-type-html{% endif %}">
+                                {% if item.file_type and 'ZIP' in item.file_type %}
+                                <i class="fa-solid fa-file-zipper"></i> ZIP Archive
+                                {% elif item.file_type and 'Deploy' in item.file_type %}
+                                <i class="fa-solid fa-rocket"></i> Deploy Bundle
+                                {% else %}
+                                <i class="fa-solid fa-file-code"></i> HTML Export
+                                {% endif %}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="dl-size">
+                                {% if item.file_size_bytes >= 1048576 %}
+                                {{ (item.file_size_bytes / 1048576)|round(2) }} MB
+                                {% else %}
+                                {{ (item.file_size_bytes / 1024)|round(1) }} KB
+                                {% endif %}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="dl-date"><i class="fa-regular fa-clock"></i> {{ item.downloaded_at_fmt }}</span>
+                        </td>
+                        <td>
+                            <div class="dl-row-actions">
+                                {% if item.file_type and 'Deploy' in item.file_type %}
+                                <a href="/download/deploy/{{ item.project_id }}" class="dl-row-btn" title="Re-download">
+                                    <i class="fa-solid fa-download"></i>
+                                </a>
+                                {% elif item.file_type and 'ZIP' in item.file_type %}
+                                <a href="/download/zip/{{ item.project_id }}" class="dl-row-btn" title="Re-download">
+                                    <i class="fa-solid fa-download"></i>
+                                </a>
+                                {% else %}
+                                <a href="/download/html/{{ item.project_id }}" class="dl-row-btn" title="Re-download">
+                                    <i class="fa-solid fa-download"></i>
+                                </a>
+                                {% endif %}
+                                <button class="dl-row-btn dl-row-delete btn-delete-row" data-id="{{ item._id_str }}" title="Delete">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- No search results -->
+        <div class="dl-empty" id="noMatchingDownloads" style="display: none;">
+            <div class="dl-empty-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+            <h3>No matching downloads</h3>
+            <p>Try a different search term or filter.</p>
+        </div>
+
+        {% else %}
+
+        <!-- ═══════════════════════════════════════════════════
+             EMPTY STATE
+             ═══════════════════════════════════════════════════ -->
+        <div class="dl-empty-state">
+            <div class="dl-empty-glow"></div>
+            <div class="dl-empty-content">
+                <div class="dl-empty-icon-lg">
+                    <i class="fa-solid fa-cloud-arrow-down"></i>
+                </div>
+                <h2>No exports yet</h2>
+                <p>Export your first AI-generated website as a ZIP archive, standalone HTML, or deploy bundle.</p>
+            </div>
+        </div>
+
+        {% endif %}
+    </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     TOAST
+     ═══════════════════════════════════════════════════════ -->
+<div id="toastNotification" class="dl-toast">
+    <i id="toastIcon" class="fa-solid fa-circle-check"></i>
+    <span id="toastMessage"></span>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     MODAL: Confirm Clear History
+     ═══════════════════════════════════════════════════════ -->
+<div id="clearHistoryModal" class="dl-modal-overlay">
+    <div class="dl-modal dl-modal-sm">
+        <div class="dl-modal-head">
+            <h3 style="color: #ef4444;"><i class="fa-solid fa-triangle-exclamation"></i> Clear Download History</h3>
+            <button class="dl-modal-close" data-modal="clearHistoryModal"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="dl-modal-body-text">
+            <p>Are you sure you want to clear your download log history from MongoDB?</p>
+            <p class="dl-warning">This will remove all export log records, but your saved projects will remain intact.</p>
+        </div>
+        <div class="dl-modal-foot">
+            <button type="button" class="dl-btn dl-btn-ghost closeModalBtn" data-modal="clearHistoryModal">Cancel</button>
+            <button type="button" id="confirmClearHistoryBtn" class="dl-btn dl-btn-danger"><i class="fa-solid fa-trash-can"></i> Clear All History</button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/downloads.js') }}"></script>
+{% endblock %}

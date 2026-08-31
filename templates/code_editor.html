@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" data-theme-color="{{ theme_color }}" data-theme-value="{{ theme_color_value }}" data-theme-mode="{{ theme_mode }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+  <title>Code Editor | Nexus Flow</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/workspace.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='vendor/fontawesome/css/all.min.css') }}">
+  <script src="/static/vendor/monaco/min/vs/loader.js"></script>
+  <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+</head>
+<body class="workspace-page">
+  <div class="app-shell">
+    {% include 'components/sidebar.html' %}
+
+    <main class="main-content workspace-main">
+      <div class="page-header">
+        <div>
+          <p class="eyebrow">Editor</p>
+          <h1>Code Editor</h1>
+          <p>Edit HTML, CSS, and JavaScript with a professional Monaco workspace.</p>
+        </div>
+        <div class="status-chip">Auto-save enabled</div>
+      </div>
+
+      <section class="workspace-card editor-card">
+        <div class="editor-toolbar">
+          <div class="editor-tabs">
+            <button class="editor-tab active" data-lang="html">HTML</button>
+            <button class="editor-tab" data-lang="css">CSS</button>
+            <button class="editor-tab" data-lang="javascript">JavaScript</button>
+          </div>
+
+          <div class="editor-tool-actions">
+            <button id="saveEditorBtn" class="toolbar-action"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+            <button id="formatEditorBtn" class="toolbar-action"><i class="fa-solid fa-wand-magic-sparkles"></i> Format</button>
+            <button id="copyEditorBtn" class="toolbar-action"><i class="fa-regular fa-copy"></i> Copy</button>
+            <button id="downloadHtmlBtn" class="toolbar-action"><i class="fa-solid fa-file-code"></i> Download HTML</button>
+            <button id="downloadZipBtn" class="toolbar-action"><i class="fa-solid fa-file-zipper"></i> Download ZIP</button>
+          </div>
+        </div>
+
+        <div class="editor-controls">
+          <label class="switch-row"><input type="checkbox" id="lineNumbersToggle" checked> Line Numbers</label>
+          <label class="switch-row"><input type="checkbox" id="autocompleteToggle" checked> Auto Complete</label>
+          <label class="switch-row"><input type="checkbox" id="autosaveToggle" checked> Auto Save</label>
+        </div>
+
+        <div id="monacoEditorContainer" class="monaco-editor-shell"></div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    window.NEXUS_WORKSPACE_STATE = {{ state | tojson }};
+  </script>
+  <script src="{{ url_for('static', filename='js/workspace.js') }}"></script>
+</body>
+</html>

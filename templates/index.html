@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en" data-theme-color="{{ theme_color }}" data-theme-value="{{ theme_color_value }}" data-theme-mode="{{ theme_mode }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <title>Nexus Flow AI - Web Builder</title>
+
+    <!-- Google Fonts -->
+            <link rel="stylesheet" href="{{ url_for('static', filename='vendor/fonts/fonts.css') }}">
+<!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/fontawesome/css/all.min.css') }}">
+    
+    <!-- Global Theme System -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <!-- Early Theme Script (Prevents Flickering) -->
+    <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header>
+        <div class="logo">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Nexus Flow Logo">
+            <div class="logo-text">
+                <h2>NEXUS FLOW</h2>
+                <p>AI Website Builder</p>
+            </div>
+        </div>
+        <i class="fa-solid fa-bars" id="menu-icon"></i>
+
+        <nav>
+            <a href="#home" class="active">Home</a>
+            <a href="#features">Features</a>
+            <a href="#about">About</a>
+            <a href="#contact">Contact</a>
+        </nav>
+
+        <div class="nav-buttons">
+            <a href="{{url_for('login')}}" class="login-btn">Login</a>
+            <a href="{{url_for('register')}}" class="register-btn">Register</a>
+        </div>
+    </header>
+
+    <!-- Home Hero Section (Preserved Existing Structure & Content) -->
+    <section class="home" id="home">
+        <div class="home-img">
+            <img src="{{ url_for('static', filename='images/main.png') }}" alt="Nexus Flow AI Website Builder">
+        </div>
+        <div class="home-content">
+            <div class="hero-badge">
+                <span class="badge-dot"></span>
+               ✨ AI POWERED. LIMITELESS POSSIBILITIES.
+            </div>
+            <h1>Build Stunning Websites<br><span>with AI in minutes</span></h1>
+            <p>Describe your ideas in simple words and let AI generate the complete website for you.</p>
+            <div class="hero-actions">
+                <a href="{{url_for('login')}}" class="btn primary-btn">Get Started</a>
+            </div>
+
+            <div class="social-icons">
+                <a href="https://www.linkedin.com/" target="_blank"><i class="fa-brands fa-linkedin"></i></a>
+                <a href="https://github.com/rajeshkumar241" target="_blank"><i class="fa-brands fa-github"></i></a>
+                <a href="https://www.instagram.com/royalking.__.75/" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+                <a href="https://x.com/" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
+                <a href="https://wa.me/919345867523" class="whatsapp-float" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features reveal-on-scroll" id="features">
+        <div class="section-title">
+            <h2>Powerful <span>Features</span></h2>
+            <p>Everything you need to build stunning, production-ready websites with AI.</p>
+        </div>
+
+        <div class="feature-container">
+            <div class="feature-card">
+                <div class="icon-box"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                <h3>AI Website Generation</h3>
+                <p>Create complete, high-converting websites instantly using natural language prompts and Gemini AI.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon-box"><i class="fa-solid fa-desktop"></i></div>
+                <h3>Live Preview</h3>
+                <p>Test and preview your AI-generated website in real time across multiple viewport sizes.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon-box"><i class="fa-solid fa-cubes"></i></div>
+                <h3>Drag & Drop Builder</h3>
+                <p>Customize layouts, text, colors, and components effortlessly with intuitive controls.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon-box"><i class="fa-solid fa-mobile-screen-button"></i></div>
+                <h3>Responsive Design</h3>
+                <p>Automatically generates 100% mobile-friendly responsive websites for all screen sizes.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon-box"><i class="fa-solid fa-file-zipper"></i></div>
+                <h3>One Click Export</h3>
+                <p>Export clean, well-structured standalone HTML, CSS, and JS zip packages with one click.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon-box"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                <h3>Secure Cloud Storage</h3>
+                <p>Store your projects safely in MongoDB Atlas cloud storage and edit them anytime.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about-section reveal-on-scroll" id="about">
+        <div class="section-title">
+            <h2>About <span>Nexus Flow</span></h2>
+            <p>Building the future of web creation with cutting-edge Artificial Intelligence.</p>
+        </div>
+
+        <!-- Mission Container -->
+        <div class="mission-box">
+            <div class="mission-icon">
+                <i class="fa-solid fa-bullseye"></i>
+            </div>
+            <div class="mission-content">
+                <h3>Our Mission</h3>
+                <p>Nexus Flow is an advanced AI-powered website builder designed to empower developers, entrepreneurs, and creators. By transforming natural language prompts into production-ready HTML, CSS, and JS web structures, Nexus Flow eliminates technical barriers and accelerates web creation from hours to seconds.</p>
+            </div>
+        </div>
+
+        <!-- Why Choose Nexus Flow -->
+        <div class="why-choose-wrapper">
+            <h3 class="subsection-title">Why Choose Nexus Flow</h3>
+            <div class="why-grid">
+                <div class="why-card">
+                    <i class="fa-solid fa-brain"></i>
+                    <h4>AI Powered</h4>
+                    <p>Generates semantic HTML, modern styling, and clean scripts using Gemini AI algorithms.</p>
+                </div>
+
+                <div class="why-card">
+                    <i class="fa-solid fa-bolt"></i>
+                    <h4>Fast Website Generation</h4>
+                    <p>Transform prompts into live responsive web templates in under 2 seconds.</p>
+                </div>
+
+                <div class="why-card">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <h4>Modern UI</h4>
+                    <p>Designed with glassmorphism, glowing gradients, micro-interactions, and premium aesthetics.</p>
+                </div>
+
+                <div class="why-card">
+                    <i class="fa-solid fa-mobile-screen"></i>
+                    <h4>Responsive Websites</h4>
+                    <p>Every website layout automatically flexes to look perfect on mobile, tablet, and desktop.</p>
+                </div>
+
+                <div class="why-card">
+                    <i class="fa-solid fa-sliders"></i>
+                    <h4>Easy Customization</h4>
+                    <p>Effortlessly adjust components, color schemes, typography, and content on the fly.</p>
+                </div>
+
+                <div class="why-card">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <h4>Secure Cloud Storage</h4>
+                    <p>Your web projects are backed up safely on encrypted MongoDB Atlas cloud infrastructure.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Project Statistics -->
+        <div class="stats-counter-wrapper">
+            <div class="counter-item">
+                <i class="fa-solid fa-globe"></i>
+                <h3 class="counter-number" data-target="15400">0</h3>
+                <p>Websites Generated</p>
+            </div>
+
+            <div class="counter-item">
+                <i class="fa-solid fa-users"></i>
+                <h3 class="counter-number" data-target="8500">0</h3>
+                <p>Active Users</p>
+            </div>
+
+            <div class="counter-item">
+                <i class="fa-solid fa-cloud-arrow-down"></i>
+                <h3 class="counter-number" data-target="45000">0</h3>
+                <p>Code Downloads</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technology Stack Section -->
+    <section class="tech-section reveal-on-scroll" id="tech">
+        <div class="section-title">
+            <h2>Technology <span>Stack</span></h2>
+            <p>The powerful technologies powering Nexus Flow behind the scenes.</p>
+        </div>
+
+        <div class="tech-grid">
+            <div class="tech-card">
+                <div class="tech-icon"><i class="fa-solid fa-flask"></i></div>
+                <h3>Flask</h3>
+                <span class="tech-tag">Backend Framework</span>
+                <p>Fast and scalable Python web backend</p>
+            </div>
+
+            <div class="tech-card">
+                <div class="tech-icon"><i class="fa-solid fa-leaf"></i></div>
+                <h3>MongoDB</h3>
+                <span class="tech-tag">Database</span>
+                <p>Stores projects, users, and website versions</p>
+            </div>
+
+            <div class="tech-card">
+                <div class="tech-icon"><i class="fa-solid fa-gem"></i></div>
+                <h3>Google Gemini</h3>
+                <span class="tech-tag">Primary AI Provider</span>
+                <p>High-speed design planning and code generation with Gemini 2.5 Flash</p>
+            </div>
+
+            <div class="tech-card">
+                <div class="tech-icon"><i class="fa-solid fa-route"></i></div>
+                <h3>OpenRouter</h3>
+                <span class="tech-tag">Multi-Model Provider</span>
+                <p>Seamless access to top open-source and proprietary foundation models</p>
+            </div>
+
+            <div class="tech-card">
+                <div class="tech-icon"><i class="fa-solid fa-code"></i></div>
+                <h3>HTML / CSS / JavaScript</h3>
+                <span class="tech-tag">Frontend Technologies</span>
+                <p>Creates responsive and interactive websites</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section reveal-on-scroll" id="contact">
+        <div class="section-title">
+            <h2>Get in <span>Touch</span></h2>
+            <p>Have questions, feedback, or need assistance? Reach out to our team anytime.</p>
+        </div>
+
+        <div class="contact-container">
+            <!-- Contact Form -->
+            <div class="contact-form-wrapper">
+                <h3>Send Us a Message</h3>
+                <form class="contact-form" onsubmit="event.preventDefault(); alert('Thank you for your message! Our team will contact you shortly.'); this.reset();">
+                    <div class="input-row">
+                        <div class="input-field">
+                            <label for="fullName">Full Name</label>
+                            <input type="text" id="fullName" placeholder="John Doe" required>
+                        </div>
+                        <div class="input-field">
+                            <label for="contactEmail">Email Address</label>
+                            <input type="email" id="contactEmail" placeholder="john@example.com" required>
+                        </div>
+                    </div>
+
+                    <div class="input-field">
+                        <label for="subject">Subject</label>
+                        <input type="text" id="subject" placeholder="How can we help you?" required>
+                    </div>
+
+                    <div class="input-field">
+                        <label for="message">Message</label>
+                        <textarea id="message" rows="5" placeholder="Write your message here..." required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn primary-btn submit-btn">
+                        <span>Send Message</span> <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Contact Info & Details -->
+            <div class="contact-info-wrapper">
+                <h3>Contact Information</h3>
+                <p>Feel free to connect with us through any of the channels below.</p>
+
+                <div class="info-list">
+                    <div class="info-item">
+                        <div class="info-icon"><i class="fa-solid fa-envelope"></i></div>
+                        <div class="info-text">
+                            <span>Email</span>
+                            <a href="mailto:support@nexusflow.ai">support@nexusflow.ai</a>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-icon"><i class="fa-solid fa-phone"></i></div>
+                        <div class="info-text">
+                            <span>Phone</span>
+                            <a href="tel:+919345867523">+91 93458 67523</a>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-icon"><i class="fa-solid fa-location-dot"></i></div>
+                        <div class="info-text">
+                            <span>Address</span>
+                            <p>Silicon Valley Tech Park, CA 94025</p>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-icon"><i class="fa-solid fa-clock"></i></div>
+                        <div class="info-text">
+                            <span>Working Hours</span>
+                            <p>Mon - Fri: 9:00 AM - 6:00 PM EST</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Social Media Icons -->
+                <div class="contact-socials">
+                    <span>Follow Us:</span>
+                    <div class="social-icons">
+                        <a href="https://www.linkedin.com/" target="_blank" title="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+                        <a href="https://github.com/rajeshkumar241" target="_blank" title="GitHub"><i class="fa-brands fa-github"></i></a>
+                        <a href="https://www.instagram.com/royalking.__.75/" target="_blank" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="https://x.com/" target="_blank" title="X (Twitter)"><i class="fa-brands fa-x-twitter"></i></a>
+                        <a href="https://wa.me/919345867523" target="_blank" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-col brand-col">
+                <div class="logo">
+                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Nexus Flow Logo">
+                    <div class="logo-text">
+                        <h2>NEXUS FLOW</h2>
+                        <p>AI Website Builder</p>
+                    </div>
+                </div>
+                <p class="footer-desc">Empowering creators, startups, and developers to build stunning websites effortlessly using artificial intelligence.</p>
+                <div class="footer-socials">
+                    <a href="https://www.linkedin.com/" target="_blank"><i class="fa-brands fa-linkedin"></i></a>
+                    <a href="https://github.com/rajeshkumar241" target="_blank"><i class="fa-brands fa-github"></i></a>
+                    <a href="https://www.instagram.com/royalking.__.75/" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://x.com/" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
+                    <a href="https://wa.me/919345867523" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-col">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#about">About Us</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Resources</h4>
+                <ul>
+                    <li><a href="{{ url_for('login') }}">AI Builder Engine</a></li>
+                    <li><a href="#about">Documentation</a></li>
+                    <li><a href="#contact">Help Center</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="#home">Privacy Policy</a></li>
+                    <li><a href="#home">Terms of Service</a></li>
+                    <li><a href="#home">Security Policy</a></li>
+                    <li><a href="#home">Cookie Preferences</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 Nexus Flow AI Website Builder. All rights reserved.</p>
+            <a href="#home" id="backToTopBtn" class="back-to-top-btn" title="Back to Top">
+                <i class="fa-solid fa-arrow-up"></i>
+            </a>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+</body>
+</html>

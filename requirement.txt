@@ -1,0 +1,12 @@
+Flask
+Flask-CORS
+Flask-PyMongo
+python-dotenv
+scikit-learn
+pandas
+numpy
+joblib
+beautifulsoup4
+Pillow
+google-genai
+openai

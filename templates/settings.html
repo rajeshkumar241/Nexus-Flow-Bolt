@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% set active_page = 'settings' %}
+
+{% block title %}Settings | Nexus Flow AI{% endblock %}
+{% block page_title %}Settings{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/settings-v2.css') }}">
+{% endblock %}
+
+{% block content %}
+{% include "partials/settings_options.html" %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/settings.js') }}"></script>
+{% endblock %}

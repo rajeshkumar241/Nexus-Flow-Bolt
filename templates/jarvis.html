@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+{% set active_page = 'jarvis' %}
+
+{% block title %}Jarvis AI Workspace | Nexus Flow{% endblock %}
+{% block page_title %}Jarvis AI Workspace{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/jarvis.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/jarvis-workspace.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="jv-workspace-layout">
+  <!-- Top Status Bar -->
+  <div class="jv-topbar">
+    <div class="jv-topbar-left">
+      <div class="jv-status-dot online" id="jvStatusDot" title="Online"></div>
+      <span class="jv-topbar-title"><i class="fa-solid fa-robot"></i> Jarvis</span>
+      <span class="jv-status-pill" id="jvTopStatus">Online</span>
+      <span class="jv-model-pill" id="jvTopModel">Llama 3.3</span>
+      <span class="jv-project-pill" id="jvTopProject">No project</span>
+    </div>
+    <div class="jv-topbar-right">
+      <span class="jv-current-task" id="jvCurrentTask">Idle</span>
+      <select id="jvProjectSelect" class="jv-project-select" title="Select project">
+        <option value="">No project selected</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Three Panel Grid -->
+  <div class="jv-three-col">
+    <!-- LEFT: Conversation -->
+    <section class="jv-panel jv-panel-left">
+      <div class="jv-panel-header">
+        <h3><i class="fa-solid fa-comments"></i> Conversation</h3>
+        <span class="jv-panel-sub">Jarvis Chat</span>
+      </div>
+      <div class="jv-modes" id="jvModeTabs">
+        <button class="jv-mode-btn active" data-mode="chat"><i class="fa-solid fa-comments"></i> Chat</button>
+        <button class="jv-mode-btn" data-mode="code"><i class="fa-solid fa-code"></i> Code</button>
+        <button class="jv-mode-btn" data-mode="debug"><i class="fa-solid fa-bug"></i> Debug</button>
+        <button class="jv-mode-btn" data-mode="analyze"><i class="fa-solid fa-magnifying-glass-chart"></i> Analyze</button>
+        <button class="jv-mode-btn" data-mode="changes"><i class="fa-solid fa-code-branch"></i> Changes</button>
+      </div>
+      <div class="jv-chat-area">
+        <div id="jvChatLog" class="jv-chat-log">
+          <div class="jv-welcome">
+            <div class="jv-welcome-icon"><i class="fa-solid fa-robot"></i></div>
+            <h2 class="jv-welcome-title">Hello! I'm Jarvis.</h2>
+            <p class="jv-welcome-desc">Cursor-like AI workspace. Select a project and start building. Try command center or ask anything.</p>
+            <div class="jv-welcome-actions">
+              <button class="jv-quick" data-prompt="Analyze my project">Analyze Project</button>
+              <button class="jv-quick" data-prompt="Why preview is blank?">Why preview is blank?</button>
+              <button class="jv-quick" data-prompt="Fix errors">Fix Errors</button>
+              <button class="jv-quick" data-prompt="Improve design">Improve design</button>
+            </div>
+          </div>
+        </div>
+        <div class="jv-input-area">
+          <div class="jv-input-wrap">
+            <button id="jvVoiceBtn" class="jv-voice-btn" title="Voice input"><i class="fa-solid fa-microphone"></i></button>
+            <textarea id="jvInput" rows="1" placeholder="Ask Jarvis anything... (e.g. Change navbar to purple)" maxlength="4000"></textarea>
+            <button id="jvSendBtn" class="jv-send-btn" title="Send"><i class="fa-solid fa-paper-plane"></i></button>
+          </div>
+          <div class="jv-input-footer">
+            <span class="jv-hint">Enter to send • Shift+Enter new line • <span id="jvListeningHint" style="display:none;color:#22c55e">● Listening...</span></span>
+            <span class="jv-model-badge" id="jvModelBadge">Llama 3.3</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CENTER: AI Interaction Workspace -->
+    <section class="jv-panel jv-panel-center">
+      <div class="jv-panel-header">
+        <h3><i class="fa-solid fa-table-columns"></i> AI Workspace</h3>
+        <span class="jv-panel-sub" id="jvCenterSub">Chat & Code</span>
+      </div>
+
+      <!-- AI Command Center -->
+      <div class="jv-card jv-glass">
+        <div class="jv-card-title"><i class="fa-solid fa-bolt"></i> AI Command Center</div>
+        <div class="jv-command-grid">
+          <button class="jv-cmd-btn" id="btnAnalyze"><i class="fa-solid fa-magnifying-glass-chart"></i> Analyze Project</button>
+          <button class="jv-cmd-btn" id="btnFix"><i class="fa-solid fa-wrench"></i> Fix Errors</button>
+          <button class="jv-cmd-btn" id="btnImproveDesign"><i class="fa-solid fa-palette"></i> Improve Design</button>
+          <button class="jv-cmd-btn" id="btnOptimize"><i class="fa-solid fa-bolt"></i> Optimize Code</button>
+          <button class="jv-cmd-btn" id="btnRunTest"><i class="fa-solid fa-vial"></i> Run Tests</button>
+          <button class="jv-cmd-btn jv-cmd-primary" id="btnDeploy"><i class="fa-solid fa-rocket"></i> Deploy</button>
+        </div>
+      </div>
+
+      <!-- Code Assistant Panel -->
+      <div class="jv-card jv-glass">
+        <div class="jv-card-title"><i class="fa-solid fa-code"></i> Code Assistant <span id="jvCurrentFileLabel" class="jv-count">No file selected</span></div>
+        <div class="jv-code-assistant">
+          <div class="jv-code-meta">
+            <span id="jvCurrentFilePath" class="jv-code-path">Select a file from the right panel</span>
+            <span class="jv-code-actions">
+              <button id="jvApplyBtn" class="jv-mini-btn jv-mini-primary" style="display:none"><i class="fa-solid fa-check"></i> Apply</button>
+              <button id="jvRevertBtn" class="jv-mini-btn" style="display:none"><i class="fa-solid fa-rotate-left"></i> Revert</button>
+            </span>
+          </div>
+          <div id="jvCodeDiff" class="jv-diff-view">
+            <div class="jv-empty">No pending changes. Run Analyze or Fix to see diffs.</div>
+          </div>
+          <div id="jvCodePreview" class="jv-code-preview" style="display:none">
+            <pre><code id="jvCodeContent"></code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Changes / Mode-specific content -->
+      <div class="jv-card jv-glass" id="jvChangesCard">
+        <div class="jv-card-title"><i class="fa-solid fa-code-branch"></i> Recent Changes <span id="jvChangesCount" class="jv-count">0</span></div>
+        <div id="jvRecentChanges" class="jv-recent-list">
+          <div class="jv-empty">No changes yet. Jarvis will log edits here.</div>
+        </div>
+      </div>
+
+      <!-- Last Analysis -->
+      <div class="jv-card jv-glass" id="jvAnalysisCard" style="display:none">
+        <div class="jv-card-title"><i class="fa-solid fa-clipboard-check"></i> Last Analysis</div>
+        <div id="jvAnalysisContent" class="jv-analysis"></div>
+      </div>
+    </section>
+
+    <!-- RIGHT: Project Intelligence -->
+    <section class="jv-panel jv-panel-right">
+      <div class="jv-panel-header">
+        <h3><i class="fa-solid fa-brain"></i> Project Intelligence</h3>
+        <span class="jv-panel-sub">Insights & Context</span>
+      </div>
+      <div class="jv-ws-scroll">
+        <!-- Jarvis Status -->
+        <div class="jv-card jv-glass">
+          <div class="jv-card-title"><i class="fa-solid fa-signal"></i> Jarvis Status</div>
+          <div class="jv-status-grid">
+            <div class="jv-status-row"><span>Online</span><strong id="jvStatusOnline" class="jv-status-online">● Online</strong></div>
+            <div class="jv-status-row"><span>Active Model</span><strong id="jvCtxModel">Loading...</strong></div>
+            <div class="jv-status-row"><span>Project</span><strong id="jvCtxProject">—</strong></div>
+            <div class="jv-status-row"><span>Task</span><strong id="jvCtxTask">Idle</strong></div>
+          </div>
+        </div>
+
+        <!-- Current Project -->
+        <div class="jv-card jv-glass">
+          <div class="jv-card-title"><i class="fa-solid fa-diagram-project"></i> Current Project <span id="jvWsProjectName" class="jv-count">No project</span></div>
+          <div id="jvProjectContext" class="jv-context">
+            <div class="jv-context-row"><span>Framework</span><strong id="jvCtxFramework">—</strong></div>
+            <div class="jv-context-row"><span>Files count</span><strong id="jvCtxFiles">—</strong></div>
+            <div class="jv-context-row"><span>AI Model</span><strong id="jvCtxModelDup">Loading...</strong></div>
+          </div>
+        </div>
+
+        <!-- Files -->
+        <div class="jv-card jv-glass">
+          <div class="jv-card-title"><i class="fa-solid fa-folder-tree"></i> Project Files <span id="jvFileCount" class="jv-count">0</span></div>
+          <div id="jvFileList" class="jv-file-list">
+            <div class="jv-empty">Select a project to see files</div>
+          </div>
+        </div>
+
+        <!-- Detected Issues -->
+        <div class="jv-card jv-glass" id="jvIssuesCard">
+          <div class="jv-card-title"><i class="fa-solid fa-triangle-exclamation"></i> Detected Issues <span id="jvIssuesCount" class="jv-count">0</span></div>
+          <div id="jvIssuesList" class="jv-issues-list">
+            <div class="jv-empty">No issues detected. Run Analyze.</div>
+          </div>
+        </div>
+
+        <!-- AI Model Selector -->
+        <div class="jv-card jv-glass">
+          <div class="jv-card-title"><i class="fa-solid fa-microchip"></i> AI Model</div>
+          <select id="jvModelSelect" class="jv-select"></select>
+          <div id="jvModelStatus" class="jv-model-status"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- Approval Workflow Modal -->
+<div id="jvApprovalModal" class="jv-modal" style="display:none">
+  <div class="jv-modal-content jv-modal-wide">
+    <div class="jv-modal-header"><h4><i class="fa-solid fa-shield-halved"></i> Approve Changes</h4><button class="jv-modal-close" id="jvApprovalClose">&times;</button></div>
+    <div id="jvApprovalBody" class="jv-approval-body"></div>
+    <div class="jv-modal-actions">
+      <button class="jv-btn" id="jvRejectBtn"><i class="fa-solid fa-xmark"></i> Reject</button>
+      <button class="jv-btn jv-btn-primary" id="jvApproveBtn"><i class="fa-solid fa-check"></i> Approve</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modify Modal -->
+<div id="jvModifyModal" class="jv-modal" style="display:none">
+  <div class="jv-modal-content">
+    <div class="jv-modal-header"><h4>Modify Website</h4><button class="jv-modal-close" id="jvModifyClose">&times;</button></div>
+    <p class="jv-modal-desc">Describe the change (e.g. "Change navbar color to purple")</p>
+    <textarea id="jvModifyInput" rows="3" placeholder="Change navbar color to purple"></textarea>
+    <div class="jv-modal-actions"><button class="jv-btn" id="jvModifyCancel">Cancel</button><button class="jv-btn jv-btn-primary" id="jvModifySubmit">Apply Change</button></div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/jarvis.js') }}"></script>
+{% endblock %}

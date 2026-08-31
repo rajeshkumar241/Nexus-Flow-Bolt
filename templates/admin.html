@@ -1,0 +1,252 @@
+{% extends "base.html" %}
+{% set active_page = 'admin' %}
+
+{% block title %}Admin Dashboard | Nexus Flow AI{% endblock %}
+{% block page_title %}Admin Control Center{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+{% endblock %}
+
+{% block content %}
+<!-- Main Admin Workspace -->
+<div class="admin-main">
+
+    <!-- Toast Notification Banner -->
+    <div id="toastNotification" class="toast hidden">
+        <i id="toastIcon" class="fa-solid fa-circle-check"></i>
+        <span id="toastMessage">Action completed successfully!</span>
+    </div>
+
+    <!-- Admin Header Bar -->
+    <div class="admin-header">
+        <div class="admin-title-area">
+            <h1><i class="fa-solid fa-shield-halved"></i> Admin Control Center</h1>
+            <p>System Overview, MongoDB Analytics, User Access Control, and System Audit Logs</p>
+        </div>
+
+        <div class="admin-status-cluster">
+            <div class="status-badge mongo-status">
+                <span class="pulse-dot"></span> MongoDB Atlas Connected
+            </div>
+            <div class="status-badge ai-status">
+                <i class="fa-solid fa-robot"></i> Gemini 2.5 Flash Active
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Statistics Overview Cards -->
+    <div class="admin-stats-grid">
+        <div class="admin-stat-card">
+            <div class="stat-icon-box accent">
+                <i class="fa-solid fa-users"></i>
+            </div>
+            <div class="stat-details">
+                <h3>{{ total_users or 0 }}</h3>
+                <p>Total Users</p>
+            </div>
+            <div class="stat-growth"><i class="fa-solid fa-user-plus"></i> Active</div>
+        </div>
+
+        <div class="admin-stat-card">
+            <div class="stat-icon-box blue">
+                <i class="fa-solid fa-folder-open"></i>
+            </div>
+            <div class="stat-details">
+                <h3>{{ total_projects or 0 }}</h3>
+                <p>Total Projects</p>
+            </div>
+            <div class="stat-growth"><i class="fa-solid fa-cubes"></i> Synced</div>
+        </div>
+
+        <div class="admin-stat-card">
+            <div class="stat-icon-box purple">
+                <i class="fa-solid fa-cloud-arrow-down"></i>
+            </div>
+            <div class="stat-details">
+                <h3>{{ total_downloads or 0 }}</h3>
+                <p>Total Downloads</p>
+            </div>
+            <div class="stat-growth"><i class="fa-solid fa-file-zipper"></i> Exported</div>
+        </div>
+
+        <div class="admin-stat-card">
+            <div class="stat-icon-box green">
+                <i class="fa-solid fa-brain"></i>
+            </div>
+            <div class="stat-details">
+                <h3>{{ ai_messages_count or total_chats or 0 }}</h3>
+                <p>AI Usage & Prompts</p>
+            </div>
+            <div class="stat-growth"><i class="fa-solid fa-bolt"></i> Gemini Calls</div>
+        </div>
+    </div>
+
+    <!-- User Management Panel -->
+    <div class="admin-panel user-management-panel">
+        <div class="panel-header">
+            <div class="panel-title">
+                <h2><i class="fa-solid fa-user-shield"></i> User Management</h2>
+                <span class="user-count-badge" id="userCountBadge">{{ users|length }} Total Records</span>
+            </div>
+
+            <!-- Real-time Live Search Input -->
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="adminUserSearch" value="{{ search_query or '' }}" placeholder="Search user by name or email address...">
+                {% if search_query %}
+                    <button type="button" id="clearSearchBtn" class="btn-clear-search" title="Clear Search"><i class="fa-solid fa-xmark"></i></button>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <table class="admin-table" id="usersTable">
+                <thead>
+                    <tr>
+                        <th>User Account</th>
+                        <th>Email Address</th>
+                        <th>Projects</th>
+                        <th>Downloads</th>
+                        <th>AI Chats</th>
+                        <th>Versions</th>
+                        <th>Role / Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTableBody">
+                    {% if users and users|length > 0 %}
+                        {% for u in users %}
+                        <tr id="user-row-{{ u._id_str }}">
+                            <td>
+                                <div class="user-table-profile">
+                                    <div class="user-avatar-small">
+                                        {% set pimg = profile_image_url(u) %}
+                                        {% if pimg %}
+                                            <img src="{{ pimg }}" alt="Avatar">
+                                        {% else %}
+                                            <i class="fa-solid fa-user"></i>
+                                        {% endif %}
+                                    </div>
+                                    <span class="user-fullname">{{ u.fullname or 'Nexus User' }}</span>
+                                </div>
+                            </td>
+                            <td class="user-email-cell">{{ u.email }}</td>
+                            <td><span class="metric-pill">{{ u.project_count or 0 }}</span></td>
+                            <td><span class="metric-pill">{{ u.download_count or 0 }}</span></td>
+                            <td><span class="metric-pill purple">{{ u.chat_count or 0 }}</span></td>
+                            <td><span class="metric-pill teal">{{ u.version_count or 0 }}</span></td>
+                            <td>
+                                {% if u.email == user.email %}
+                                    <span class="role-badge admin"><i class="fa-solid fa-crown"></i> Active Admin</span>
+                                {% else %}
+                                    <span class="role-badge user"><i class="fa-solid fa-user-check"></i> Verified User</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if u.email != user.email %}
+                                    <button class="btn-delete-user" data-id="{{ u._id_str }}" data-email="{{ u.email }}" title="Delete User Account">
+                                        <i class="fa-solid fa-trash-can"></i> Delete
+                                    </button>
+                                {% else %}
+                                    <span class="protected-label"><i class="fa-solid fa-lock"></i> System Protect</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="8" class="empty-table-cell">
+                                <i class="fa-solid fa-user-slash"></i>
+                                <p>No users found matching your search query.</p>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- System Audit Logs Panel -->
+    <div class="admin-panel audit-logs-panel">
+        <div class="panel-header">
+            <div class="panel-title">
+                <h2><i class="fa-solid fa-list-check"></i> System Audit Logs</h2>
+                <span class="log-count-badge">{{ logs|length }} Audit Records</span>
+            </div>
+            <button id="refreshLogsBtn" class="btn-refresh-logs">
+                <i class="fa-solid fa-rotate-right"></i> Refresh Logs
+            </button>
+        </div>
+
+        <div class="table-wrapper">
+            <table class="admin-table" id="logsTable">
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>User / Initiator</th>
+                        <th>Action Performed</th>
+                        <th>Event Details</th>
+                        <th>Audit Status</th>
+                    </tr>
+                </thead>
+                <tbody id="logsTableBody">
+                    {% if logs and logs|length > 0 %}
+                        {% for l in logs %}
+                        <tr>
+                            <td class="log-time-cell"><i class="fa-regular fa-clock"></i> {{ l.timestamp_fmt }}</td>
+                            <td class="log-user-cell">{{ l.user_email or l.user or 'System' }}</td>
+                            <td><span class="action-tag">{{ l.action or 'System Event' }}</span></td>
+                            <td class="log-details-cell">{{ l.details or 'Action logged successfully.' }}</td>
+                            <td>
+                                {% if l.status == 'WARNING' %}
+                                    <span class="status-pill warning"><i class="fa-solid fa-triangle-exclamation"></i> WARNING</span>
+                                {% elif l.status == 'ERROR' %}
+                                    <span class="status-pill error"><i class="fa-solid fa-circle-xmark"></i> ERROR</span>
+                                {% else %}
+                                    <span class="status-pill success"><i class="fa-solid fa-circle-check"></i> SUCCESS</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="5" class="empty-table-cell">
+                                <i class="fa-solid fa-file-excel"></i>
+                                <p>No system logs recorded yet.</p>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- Delete User Confirmation Modal -->
+<div id="deleteModal" class="modal-backdrop hidden">
+    <div class="modal-card">
+        <div class="modal-header">
+            <i class="fa-solid fa-triangle-exclamation modal-icon-warning"></i>
+            <h3>Confirm Delete Account</h3>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to permanently delete user account <strong id="deleteUserEmailTarget">user@example.com</strong>?</p>
+            <div class="warning-box">
+                <i class="fa-solid fa-circle-info"></i> This will delete the user's login account and permanently purge all associated projects, downloads, and AI chat histories from MongoDB.
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button id="cancelDeleteBtn" class="btn-modal-cancel">Cancel</button>
+            <button id="confirmDeleteBtn" class="btn-modal-delete">Confirm Delete</button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+{% endblock %}

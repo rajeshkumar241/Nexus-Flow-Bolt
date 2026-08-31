@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" data-theme-color="{{ theme_color }}" data-theme-value="{{ theme_color_value }}" data-theme-mode="{{ theme_mode }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+  <title>Website Preview | Nexus Flow</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/workspace.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='vendor/fontawesome/css/all.min.css') }}">
+  <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+</head>
+<body class="workspace-page">
+  <div class="app-shell">
+    {% include 'components/sidebar.html' %}
+
+    <main class="main-content workspace-main">
+      <div class="page-header">
+        <div>
+          <p class="eyebrow">Preview</p>
+          <h1>Website Preview</h1>
+          <p>Review your latest generated site in desktop, tablet, and mobile modes.</p>
+        </div>
+        <div class="status-chip">Always synced to the latest build</div>
+      </div>
+
+      <section class="workspace-card preview-card">
+        <div class="preview-toolbar">
+          <div class="device-switcher">
+            <button class="device-btn active" data-device="desktop"><i class="fa-solid fa-desktop"></i> Desktop</button>
+            <button class="device-btn" data-device="tablet"><i class="fa-solid fa-tablet-screen-button"></i> Tablet</button>
+            <button class="device-btn" data-device="mobile"><i class="fa-solid fa-mobile-screen-button"></i> Mobile</button>
+          </div>
+
+          <div class="preview-actions">
+            <button id="refreshPreviewBtn" class="toolbar-action"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
+            <button id="fullscreenPreviewBtn" class="toolbar-action"><i class="fa-solid fa-expand"></i> Full Screen</button>
+            <button id="newTabPreviewBtn" class="toolbar-action"><i class="fa-solid fa-arrow-up-right-from-square"></i> New Tab</button>
+            <a id="exportPreviewBtn" class="toolbar-action" href="/preview/export"><i class="fa-solid fa-download"></i> Export Preview</a>
+          </div>
+        </div>
+
+        <div class="preview-frame-shell">
+          <iframe id="previewFrame" title="Website preview" sandbox="allow-scripts allow-forms allow-popups allow-modals allow-downloads allow-presentation"></iframe>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    window.NEXUS_WORKSPACE_STATE = {{ state | tojson }};
+  </script>
+  <script src="{{ url_for('static', filename='js/workspace.js') }}"></script>
+</body>
+</html>

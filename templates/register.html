@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" data-theme-color="{{ theme_color }}" data-theme-value="{{ theme_color_value }}" data-theme-mode="{{ theme_mode }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <title>Register | Nexus Flow</title>
+
+    <!-- Google Fonts -->
+            <link rel="stylesheet" href="{{ url_for('static', filename='vendor/fonts/fonts.css') }}">
+<!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/fontawesome/css/all.min.css') }}">
+
+    <!-- Global Theme System -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+
+    <!-- Early Theme Script (Prevents Flickering) -->
+    <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+</head>
+<body>
+
+    <!-- Ambient Background Lighting -->
+    <div class="bg-lighting-blur lighting-1"></div>
+    <div class="bg-lighting-blur lighting-2"></div>
+
+    <div class="login-wrapper">
+        <div class="login-card-glass">
+
+            <!-- Brand Header -->
+            <div class="login-brand">
+                <div class="logo-wrapper">
+                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Nexus Flow Logo" class="login-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="logo-fallback-icon" style="display:none;"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                </div>
+                <h1>NEXUS FLOW</h1>
+                <p class="subtitle">Create Your AI Website Builder Account</p>
+            </div>
+
+            <!-- Error Alert Banner -->
+            {% if error %}
+            <div class="error-message">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <span>{{ error }}</span>
+            </div>
+            {% endif %}
+
+            <!-- Register Form -->
+            <form action="{{ url_for('register') }}" method="POST" autocomplete="on" class="login-form" id="registerForm">
+
+                <!-- Full Name Field -->
+                <div class="form-group">
+                    <label for="fullname">Full Name</label>
+                    <div class="input-input-wrapper">
+                        <i class="fa-solid fa-user input-icon"></i>
+                        <input type="text" id="fullname" name="fullname" placeholder="Your full name" autocomplete="name" required>
+                    </div>
+                </div>
+
+                <!-- Email Field -->
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <div class="input-input-wrapper">
+                        <i class="fa-solid fa-envelope input-icon"></i>
+                        <input type="email" id="email" name="email" placeholder="name@company.com" autocomplete="email" required>
+                    </div>
+                </div>
+
+                <!-- Password Field -->
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-input-wrapper password-container">
+                        <i class="fa-solid fa-lock input-icon"></i>
+                        <input type="password" id="password" name="password" placeholder="Minimum 6 characters" autocomplete="new-password" minlength="6" required>
+                        <i class="fa-solid fa-eye eye-icon" id="togglePassword" title="Show password" role="button" tabindex="0"></i>
+                    </div>
+                </div>
+
+                <!-- Confirm Password Field -->
+                <div class="form-group">
+                    <label for="confirm_password">Confirm Password</label>
+                    <div class="input-input-wrapper password-container">
+                        <i class="fa-solid fa-circle-check input-icon"></i>
+                        <input type="password" id="confirm_password" name="confirm_password" placeholder="Re-enter your password" autocomplete="new-password" minlength="6" required>
+                        <i class="fa-solid fa-eye eye-icon" id="toggleConfirmPassword" title="Show password" role="button" tabindex="0"></i>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="login-page-btn">
+                    <span>Create Account</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+
+                <!-- Footer / Login Link -->
+                <div class="register-link">
+                    Already have an account?
+                    <a href="{{ url_for('login') }}">Login</a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <!-- Script Files -->
+    <script>
+        // Toggle password visibility for both password fields
+        document.addEventListener("DOMContentLoaded", function () {
+            var togglePwd = function (iconId, inputId) {
+                var icon = document.getElementById(iconId);
+                var input = document.getElementById(inputId);
+                if (!icon || !input) return;
+                icon.addEventListener("click", function () {
+                    if (input.type === "password") {
+                        input.type = "text";
+                        icon.classList.remove("fa-eye");
+                        icon.classList.add("fa-eye-slash");
+                    } else {
+                        input.type = "password";
+                        icon.classList.remove("fa-eye-slash");
+                        icon.classList.add("fa-eye");
+                    }
+                });
+            };
+            togglePwd("togglePassword", "password");
+            togglePwd("toggleConfirmPassword", "confirm_password");
+        });
+    </script>
+</body>
+</html>

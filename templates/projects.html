@@ -1,0 +1,318 @@
+{% extends "base.html" %}
+{% set active_page = 'projects' %}
+
+{% block title %}My Projects | Nexus Flow{% endblock %}
+{% block page_title %}Projects{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/projects.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="pj-page">
+
+    <!-- ═══════════════════════════════════════════════════════
+         HEADER CARD
+         ═══════════════════════════════════════════════════════ -->
+    <div class="pj-header">
+        <div class="pj-header-left">
+            <div class="pj-header-icon"><i class="fa-solid fa-folder-open"></i></div>
+            <div>
+                <h1 class="pj-header-title">My AI Projects</h1>
+                <p class="pj-header-sub">Manage, edit, and deploy websites created with AI</p>
+            </div>
+        </div>
+        <div class="pj-header-actions">
+            <div class="pj-search">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="projectSearch" placeholder="Search projects...">
+            </div>
+            {% if projects and projects|length > 0 %}
+            <button class="pj-btn pj-btn-ghost" id="deleteAllBtn" title="Delete all projects">
+                <i class="fa-solid fa-trash-can"></i><span>Delete All</span>
+            </button>
+            {% endif %}
+            <button class="pj-btn pj-btn-primary" id="openCreateModalBtn">
+                <i class="fa-solid fa-plus"></i><span>Create New Website</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         STATISTICS CARDS
+         ═══════════════════════════════════════════════════════ -->
+    <div class="pj-stats">
+        <div class="pj-stat-card">
+            <div class="pj-stat-icon pj-stat-blue"><i class="fa-solid fa-layer-group"></i></div>
+            <div class="pj-stat-info">
+                <span class="pj-stat-num" id="statTotal">{{ projects|length if projects else 0 }}</span>
+                <span class="pj-stat-label">Total Projects</span>
+            </div>
+            <div class="pj-stat-trend up"><i class="fa-solid fa-arrow-up"></i> All time</div>
+        </div>
+        <div class="pj-stat-card">
+            <div class="pj-stat-icon pj-stat-purple"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+            <div class="pj-stat-info">
+                <span class="pj-stat-num" id="statGenerated">{{ projects|length if projects else 0 }}</span>
+                <span class="pj-stat-label">Generated Websites</span>
+            </div>
+            <div class="pj-stat-trend up"><i class="fa-solid fa-sparkles"></i> AI Built</div>
+        </div>
+        <div class="pj-stat-card">
+            <div class="pj-stat-icon pj-stat-green"><i class="fa-solid fa-check-circle"></i></div>
+            <div class="pj-stat-info">
+                <span class="pj-stat-num" id="statActive">{{ projects|selectattr('status', 'equalto', 'Active')|list|length if projects else 0 }}</span>
+                <span class="pj-stat-label">Active Projects</span>
+            </div>
+            <div class="pj-stat-trend up"><i class="fa-solid fa-bolt"></i> Live</div>
+        </div>
+        <div class="pj-stat-card">
+            <div class="pj-stat-icon pj-stat-orange"><i class="fa-solid fa-rocket"></i></div>
+            <div class="pj-stat-info">
+                <span class="pj-stat-num" id="statDeployed">0</span>
+                <span class="pj-stat-label">Deployed Websites</span>
+            </div>
+            <div class="pj-stat-trend neutral"><i class="fa-solid fa-globe"></i> Online</div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         PROJECTS GRID
+         ═══════════════════════════════════════════════════════ -->
+    <div class="pj-section-head">
+        <h2><i class="fa-solid fa-grid-2"></i> Recent Projects</h2>
+        <span class="pj-count">{{ projects|length if projects else 0 }} project{{ 's' if projects and projects|length != 1 else '' }}</span>
+    </div>
+
+    {% if projects and projects|length > 0 %}
+    <div class="pj-grid" id="projectsGrid">
+        {% for project in projects %}
+        <div class="pj-card" data-title="{{ project.title|lower }}" data-prompt="{{ project.prompt|lower }}" id="card-{{ project._id_str }}">
+
+            <!-- Thumbnail -->
+            <a href="/builder?project_id={{ project._id_str }}" class="pj-card-preview" title="Continue building">
+                <iframe src="{{ project.thumbnail_ref }}" class="pj-card-thumb" loading="lazy" title="{{ project.title }}" sandbox="allow-scripts allow-forms allow-popups allow-modals allow-presentation"></iframe>
+                <div class="pj-card-preview-overlay">
+                    <span class="pj-card-preview-btn"><i class="fa-solid fa-arrow-up-right-from-square"></i> Open Builder</span>
+                </div>
+            </a>
+
+            <!-- Card Body -->
+            <div class="pj-card-body">
+                <div class="pj-card-top">
+                    <h3 class="pj-card-title">{{ project.title }}</h3>
+                    <span class="pj-status {{ 'pj-status-active' if project.status == 'Active' else 'pj-status-draft' }}">
+                        <span class="pj-status-dot"></span>
+                        {{ project.status }}
+                    </span>
+                </div>
+                <p class="pj-card-desc">{{ project.prompt|truncate(100) }}</p>
+                <div class="pj-card-meta">
+                    <span><i class="fa-regular fa-calendar"></i> {{ project.created_at_fmt }}</span>
+                    <span><i class="fa-regular fa-clock"></i> {{ project.updated_at_fmt }}</span>
+                </div>
+            </div>
+
+            <!-- Card Actions -->
+            <div class="pj-card-actions">
+                <a href="/builder?project_id={{ project._id_str }}" class="pj-action pj-action-primary" title="Open in AI Builder">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Open
+                </a>
+                <button class="pj-action pj-action-ghost btn-open" data-id="{{ project._id_str }}" title="Preview">
+                    <i class="fa-solid fa-eye"></i>
+                </button>
+                <button class="pj-action pj-action-ghost btn-edit" data-id="{{ project._id_str }}" data-title="{{ project.title }}" data-prompt="{{ project.prompt }}" title="Edit">
+                    <i class="fa-solid fa-pen"></i>
+                </button>
+                <button class="pj-action pj-action-ghost btn-duplicate" data-id="{{ project._id_str }}" title="Duplicate">
+                    <i class="fa-solid fa-copy"></i>
+                </button>
+                <button class="pj-action pj-action-danger btn-delete" data-id="{{ project._id_str }}" data-title="{{ project.title }}" title="Delete">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- No search results -->
+    <div class="pj-empty" id="noSearchResults" style="display: none;">
+        <div class="pj-empty-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+        <h3>No matching projects</h3>
+        <p>Try a different search term</p>
+    </div>
+
+    {% else %}
+
+    <!-- ═══════════════════════════════════════════════════════
+         EMPTY STATE
+         ═══════════════════════════════════════════════════════ -->
+    <div class="pj-empty-state" id="emptyState">
+        <div class="pj-empty-glow"></div>
+        <div class="pj-empty-content">
+            <div class="pj-empty-icon-lg">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+            </div>
+            <h2>Create your first AI Website</h2>
+            <p>Describe your dream website and let AI build it for you in seconds. No coding required.</p>
+            <button class="pj-btn pj-btn-primary pj-btn-lg" id="emptyCreateBtn">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Start with a Prompt
+            </button>
+        </div>
+    </div>
+
+    {% endif %}
+
+    <!-- ═══════════════════════════════════════════════════════
+         AI ACTIVITY TIMELINE
+         ═══════════════════════════════════════════════════════ -->
+    {% if projects and projects|length > 0 %}
+    <div class="pj-timeline-section">
+        <div class="pj-section-head">
+            <h2><i class="fa-solid fa-timeline"></i> Recent AI Activity</h2>
+        </div>
+        <div class="pj-timeline">
+            {% for project in projects[:5] %}
+            <div class="pj-timeline-item">
+                <div class="pj-timeline-dot"></div>
+                <div class="pj-timeline-content">
+                    <span class="pj-timeline-action">Website generated</span>
+                    <span class="pj-timeline-project">{{ project.title }}</span>
+                    <span class="pj-timeline-time">{{ project.updated_at_fmt }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     TOAST
+     ═══════════════════════════════════════════════════════ -->
+<div id="toastNotification" class="pj-toast">
+    <i id="toastIcon" class="fa-solid fa-circle-check"></i>
+    <span id="toastMessage"></span>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     MODALS (preserved from original)
+     ═══════════════════════════════════════════════════════ -->
+
+<!-- Create Project Modal -->
+<div id="createProjectModal" class="pj-modal-overlay">
+    <div class="pj-modal">
+        <div class="pj-modal-head">
+            <h3><i class="fa-solid fa-folder-plus"></i> Create New Project</h3>
+            <button class="pj-modal-close" data-modal="createProjectModal"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <form id="createProjectForm">
+            <div class="pj-field">
+                <label for="newTitle">Project Name</label>
+                <input type="text" id="newTitle" placeholder="e.g. Modern Portfolio Website" required>
+            </div>
+            <div class="pj-field">
+                <label for="newPrompt">Website Description / Prompt</label>
+                <textarea id="newPrompt" rows="4" placeholder="Describe the layout, theme, and sections for your website..." required></textarea>
+            </div>
+            <div class="pj-modal-foot">
+                <button type="button" class="pj-btn pj-btn-ghost closeModalBtn" data-modal="createProjectModal">Cancel</button>
+                <button type="submit" class="pj-btn pj-btn-primary"><i class="fa-solid fa-floppy-disk"></i> Create Project</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Project Modal -->
+<div id="editProjectModal" class="pj-modal-overlay">
+    <div class="pj-modal">
+        <div class="pj-modal-head">
+            <h3><i class="fa-solid fa-pen-to-square"></i> Edit Project</h3>
+            <button class="pj-modal-close" data-modal="editProjectModal"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <form id="editProjectForm">
+            <input type="hidden" id="editProjectId">
+            <div class="pj-field">
+                <label for="editTitle">Project Name</label>
+                <input type="text" id="editTitle" required>
+            </div>
+            <div class="pj-field">
+                <label for="editPrompt">Website Description / Prompt</label>
+                <textarea id="editPrompt" rows="4" required></textarea>
+            </div>
+            <div class="pj-modal-foot">
+                <button type="button" class="pj-btn pj-btn-ghost closeModalBtn" data-modal="editProjectModal">Cancel</button>
+                <button type="submit" class="pj-btn pj-btn-primary"><i class="fa-solid fa-check"></i> Update</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Preview Modal -->
+<div id="openProjectModal" class="pj-modal-overlay">
+    <div class="pj-modal pj-modal-lg">
+        <div class="pj-modal-head">
+            <div class="pj-preview-head">
+                <h3 id="previewProjectTitle"><i class="fa-solid fa-globe"></i> Live Preview</h3>
+                <span id="previewProjectDate" class="pj-preview-date"></span>
+            </div>
+            <div class="pj-preview-actions">
+                <button id="toggleCodeBtn" class="pj-btn pj-btn-ghost pj-btn-sm"><i class="fa-solid fa-code"></i> Source</button>
+                <button class="pj-modal-close" data-modal="openProjectModal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+        </div>
+        <div class="pj-preview-body">
+            <div id="previewFrameWrapper" class="pj-preview-frame">
+                <iframe id="projectPreviewIframe" sandbox="allow-scripts allow-forms allow-popups allow-modals allow-downloads allow-presentation"></iframe>
+            </div>
+            <div id="sourceCodeWrapper" class="pj-preview-code" style="display: none;">
+                <textarea id="sourceCodeArea" readonly></textarea>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div id="deleteProjectModal" class="pj-modal-overlay">
+    <div class="pj-modal pj-modal-sm">
+        <div class="pj-modal-head">
+            <h3 style="color: #ef4444;"><i class="fa-solid fa-triangle-exclamation"></i> Delete Project</h3>
+            <button class="pj-modal-close" data-modal="deleteProjectModal"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="pj-modal-body-text">
+            <p>Are you sure you want to delete <strong id="deleteProjectName"></strong>?</p>
+            <p class="pj-warning">This action cannot be undone.</p>
+        </div>
+        <div class="pj-modal-foot">
+            <input type="hidden" id="deleteProjectId">
+            <button type="button" class="pj-btn pj-btn-ghost closeModalBtn" data-modal="deleteProjectModal">Cancel</button>
+            <button type="button" id="confirmDeleteBtn" class="pj-btn pj-btn-danger"><i class="fa-solid fa-trash"></i> Delete</button>
+        </div>
+    </div>
+</div>
+
+<!-- Delete All Modal -->
+<div id="deleteAllModal" class="pj-modal-overlay">
+    <div class="pj-modal pj-modal-sm">
+        <div class="pj-modal-head">
+            <h3 style="color: #ef4444;"><i class="fa-solid fa-triangle-exclamation"></i> Delete All Projects</h3>
+            <button class="pj-modal-close" data-modal="deleteAllModal"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="pj-modal-body-text">
+            <p>Are you sure you want to delete <strong>all your projects</strong>?</p>
+            <p class="pj-warning">This will permanently remove all generated websites. This action cannot be undone.</p>
+        </div>
+        <div class="pj-modal-foot">
+            <button type="button" class="pj-btn pj-btn-ghost closeModalBtn" data-modal="deleteAllModal">Cancel</button>
+            <button type="button" id="confirmDeleteAllBtn" class="pj-btn pj-btn-danger"><i class="fa-solid fa-trash"></i> Delete All</button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/projects.js') }}"></script>
+{% endblock %}

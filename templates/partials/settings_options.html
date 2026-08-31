@@ -1,0 +1,891 @@
+<!-- =========================================================
+     NEXUS FLOW - SETTINGS PAGE v3
+     Premium AI Operating System Settings Dashboard
+     ========================================================= -->
+
+<!-- Toast Notification Banner -->
+<div id="toastNotification" class="nx-toast">
+    <i id="toastIcon" class="fa-solid fa-circle-check"></i>
+    <span id="toastMessage">Settings updated successfully!</span>
+</div>
+
+{% if message %}
+<div class="nx-alert nx-alert-success">
+    <i class="fa-solid fa-circle-check"></i> {{ message }}
+</div>
+{% endif %}
+
+{% if error %}
+<div class="nx-alert nx-alert-danger">
+    <i class="fa-solid fa-circle-exclamation"></i> {{ error }}
+</div>
+{% endif %}
+
+<div class="nx-settings-layout">
+
+    <!-- =========================================================
+         LEFT SIDEBAR - Navigation & User Profile
+         ========================================================= -->
+    <aside class="nx-sidebar">
+        <!-- User Profile Card -->
+        <div class="nx-user-card">
+            <div class="nx-user-avatar-wrap">
+                <img src="{% if profile_image_url(user) %}{{ profile_image_url(user) }}{% else %}{{ url_for('static', filename='images/profile-icon.png') }}{% endif %}" alt="Avatar" class="nx-user-avatar">
+                <span class="nx-user-status"></span>
+                <div class="nx-avatar-glow"></div>
+            </div>
+            <div class="nx-user-info">
+                <h3 class="nx-user-name">{{ user.get('fullname', 'User') }}</h3>
+                <p class="nx-user-email">{{ user.get('email', '') }}</p>
+            </div>
+            <div class="nx-user-meta">
+                <span class="nx-badge nx-badge-active"><i class="fa-solid fa-circle"></i> Active</span>
+                <span class="nx-badge nx-badge-plan">Pro Plan</span>
+            </div>
+        </div>
+
+        <!-- Navigation Menu -->
+        <nav class="nx-nav">
+            <div class="nx-nav-section">
+                <span class="nx-nav-section-title">General</span>
+                <button class="nx-nav-item active" data-tab="tab-profile">
+                    <i class="fa-solid fa-user-gear"></i>
+                    <span>Account Profile</span>
+                </button>
+                <button class="nx-nav-item" data-tab="tab-security">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span>Security & Password</span>
+                </button>
+            </div>
+
+            <div class="nx-nav-section">
+                <span class="nx-nav-section-title">Personalization</span>
+                <button class="nx-nav-item" data-tab="tab-appearance">
+                    <i class="fa-solid fa-palette"></i>
+                    <span>Appearance</span>
+                </button>
+                <button class="nx-nav-item" data-tab="tab-notifications">
+                    <i class="fa-solid fa-bell"></i>
+                    <span>Notifications</span>
+                </button>
+            </div>
+
+            <div class="nx-nav-section">
+                <span class="nx-nav-section-title">AI Configuration</span>
+                <button class="nx-nav-item" data-tab="tab-ai">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span>AI Preferences</span>
+                </button>
+                <button class="nx-nav-item" data-tab="tab-providers">
+                    <i class="fa-solid fa-server"></i>
+                    <span>AI Provider Settings</span>
+                </button>
+                <button class="nx-nav-item" data-tab="tab-stats">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>AI Workspace Stats</span>
+                </button>
+            </div>
+
+            <div class="nx-nav-section">
+                <span class="nx-nav-section-title">System</span>
+                <button class="nx-nav-item" data-tab="tab-integrations">
+                    <i class="fa-solid fa-plug"></i>
+                    <span>Integrations</span>
+                </button>
+                <button class="nx-nav-item nx-nav-danger" data-tab="tab-danger">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span>Danger Zone</span>
+                </button>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- =========================================================
+         MAIN CONTENT AREA
+         ========================================================= -->
+    <main class="nx-main">
+
+        <!-- Tab 1: Account Profile -->
+        <section id="tab-profile" class="nx-tab-pane active">
+            <div class="nx-tab-header">
+                <div>
+                    <h2><i class="fa-solid fa-user-gear"></i> Account Profile</h2>
+                    <p>Manage your basic account details and personal information.</p>
+                </div>
+            </div>
+
+            <!-- Profile Card -->
+            <div class="nx-profile-hero">
+                <div class="nx-profile-cover"></div>
+                <div class="nx-profile-info">
+                    <div class="nx-avatar-section">
+                        <div class="nx-avatar-preview">
+                            <img src="{% if profile_image_url(user) %}{{ profile_image_url(user) }}{% else %}{{ url_for('static', filename='images/profile-icon.png') }}{% endif %}" alt="Avatar" id="profileAvatarPreview">
+                            <div class="nx-avatar-ring"></div>
+                        </div>
+                    </div>
+                    <div class="nx-profile-details">
+                        <h3>{{ user.get('fullname', 'User') }}</h3>
+                        <p>{{ user.get('email', '') }}</p>
+                        <div class="nx-profile-badges">
+                            <span class="nx-badge nx-badge-active"><i class="fa-solid fa-circle"></i> Active</span>
+                            <span class="nx-badge nx-badge-member">Member since {{ user.get('created_at', '2024') }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nx-card">
+                <div class="nx-card-header">
+                    <h3><i class="fa-solid fa-id-card"></i> Profile Information</h3>
+                </div>
+                <form id="profileForm" method="POST" action="{{ url_for('settings') }}">
+                    <input type="hidden" name="action" value="profile">
+
+                    <div class="nx-form-grid">
+                        <div class="nx-field">
+                            <label for="fullname"><i class="fa-solid fa-user"></i> Full Name</label>
+                            <input type="text" id="fullname" name="fullname" value="{{ user.get('fullname', '') }}" placeholder="Your Full Name" required>
+                        </div>
+                        <div class="nx-field">
+                            <label for="email"><i class="fa-solid fa-envelope"></i> Email Address</label>
+                            <input type="email" id="email" name="email" value="{{ user.get('email', '') }}" placeholder="your.email@example.com" required>
+                        </div>
+                    </div>
+
+                    <div class="nx-form-grid">
+                        <div class="nx-field">
+                            <label for="phone"><i class="fa-solid fa-phone"></i> Phone Number</label>
+                            <input type="tel" id="phone" name="phone" value="{{ user.get('phone', '') }}" placeholder="+1 (555) 000-0000" pattern="[\+]?[\d\s\-\(\)]{7,20}">
+                        </div>
+                        <div class="nx-field">
+                            <label for="dob"><i class="fa-solid fa-cake-candles"></i> Date of Birth</label>
+                            <input type="date" id="dob" name="dob" value="{{ user.get('dob', '') }}">
+                        </div>
+                    </div>
+
+                    <div class="nx-form-grid">
+                        <div class="nx-field">
+                            <label for="designation"><i class="fa-solid fa-briefcase"></i> Designation</label>
+                            <input type="text" id="designation" name="designation" value="{{ user.get('designation', '') }}" placeholder="e.g. AI Web Developer">
+                        </div>
+                        <div class="nx-field">
+                            <label for="location"><i class="fa-solid fa-location-dot"></i> Location</label>
+                            <input type="text" id="location" name="location" value="{{ user.get('location', '') }}" placeholder="e.g. San Francisco, CA">
+                        </div>
+                    </div>
+
+                    <div class="nx-field">
+                        <label for="bio"><i class="fa-solid fa-pen-nib"></i> Bio</label>
+                        <textarea id="bio" name="bio" rows="4" placeholder="Tell us about yourself or your web project goals...">{{ user.get('bio', '') }}</textarea>
+                    </div>
+
+                    <div class="nx-form-actions">
+                        <button type="submit" class="nx-btn nx-btn-primary">
+                            <i class="fa-solid fa-floppy-disk"></i> Save Profile
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Tab 2: Security & Password -->
+        <section id="tab-security" class="nx-tab-pane">
+            <div class="nx-tab-header">
+                <div>
+                    <h2><i class="fa-solid fa-shield-halved"></i> Security & Password</h2>
+                    <p>Update your password to keep your account safe and secure.</p>
+                </div>
+            </div>
+
+            <div class="nx-card">
+                <div class="nx-card-header">
+                    <h3><i class="fa-solid fa-key"></i> Change Password</h3>
+                </div>
+                <form id="passwordForm" method="POST" action="{{ url_for('settings') }}">
+                    <input type="hidden" name="action" value="password">
+
+                    <div class="nx-field">
+                        <label for="current_password"><i class="fa-solid fa-lock"></i> Current Password</label>
+                        <div class="nx-input-group">
+                            <input type="password" id="current_password" name="current_password" placeholder="Enter current password" required>
+                            <button type="button" class="nx-toggle-pwd" data-target="current_password">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="nx-field">
+                        <label for="new_password"><i class="fa-solid fa-lock"></i> New Password</label>
+                        <div class="nx-input-group">
+                            <input type="password" id="new_password" name="new_password" placeholder="Minimum 6 characters" required minlength="6">
+                            <button type="button" class="nx-toggle-pwd" data-target="new_password">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="nx-field">
+                        <label for="confirm_password"><i class="fa-solid fa-circle-check"></i> Confirm New Password</label>
+                        <div class="nx-input-group">
+                            <input type="password" id="confirm_password" name="confirm_password" placeholder="Re-enter new password" required minlength="6">
+                            <button type="button" class="nx-toggle-pwd" data-target="confirm_password">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="nx-form-actions">
+                        <button type="submit" class="nx-btn nx-btn-primary">
+                            <i class="fa-solid fa-key"></i> Update Password
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="nx-card">
+                <div class="nx-card-header">
+                    <h3><i class="fa-solid fa-mobile-screen"></i> Two-Factor Authentication</h3>
+                </div>
+                <div class="nx-row-between">
+                    <div>
+                        <p class="nx-text-muted">Add an extra layer of security to your account.</p>
+                    </div>
+                    <span class="nx-badge nx-badge-warning">Coming Soon</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tab 3: Appearance -->
+        <section id="tab-appearance" class="nx-tab-pane">
+            <div class="nx-tab-header">
+                <div>
+                    <h2><i class="fa-solid fa-palette"></i> Appearance</h2>
+                    <p>Customize the look and feel of your Nexus Flow workspace.</p>
+                </div>
+            </div>
+
+            <div class="nx-card">
+                <div class="nx-card-header">
+                    <h3><i class="fa-solid fa-circle-half-stroke"></i> Theme Mode</h3>
+                </div>
+                {% set theme_mode = user.get('theme_mode', 'dark') %}
+                <div class="nx-mode-grid">
+                    <label class="nx-mode-card {% if theme_mode == 'dark' %}selected{% endif %}" data-theme-mode="dark">
+                        <input type="radio" name="theme_mode" value="dark" {% if theme_mode == 'dark' %}checked{% endif %}>
+                        <span class="nx-mode-icon"><i class="fa-solid fa-moon"></i></span>
+                        <span class="nx-mode-name">Dark</span>
+                        <span class="nx-mode-desc">Premium dark interface</span>
+                    </label>
+                    <label class="nx-mode-card {% if theme_mode == 'light' %}selected{% endif %}" data-theme-mode="light">
+                        <input type="radio" name="theme_mode" value="light" {% if theme_mode == 'light' %}checked{% endif %}>
+                        <span class="nx-mode-icon"><i class="fa-solid fa-sun"></i></span>
+                        <span class="nx-mode-name">Light</span>
+                        <span class="nx-mode-desc">Clean bright interface</span>
+                    </label>
+                    <label class="nx-mode-card {% if theme_mode == 'system' %}selected{% endif %}" data-theme-mode="system">
+                        <input type="radio" name="theme_mode" value="system" {% if theme_mode == 'system' %}checked{% endif %}>
+                        <span class="nx-mode-icon"><i class="fa-solid fa-display"></i></span>
+                        <span class="nx-mode-name">System</span>
+                        <span class="nx-mode-desc">Match your OS theme</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="nx-card">
+                <div class="nx-card-header">
+                    <h3><i class="fa-solid fa-brush"></i> Accent Color</h3>
+                </div>
+                {% set theme_color = user.get('theme_color', 'blue') %}
+                {% set theme_value = user.get('theme_color_value', '#3b82f6') %}
+                <form id="appearanceForm" method="POST" action="{{ url_for('settings') }}">
+                    <input type="hidden" name="action" value="theme_color">
+
+                    <div class="nx-theme-grid">
+                        <label class="nx-theme-card {% if theme_color == 'blue' %}selected{% endif %}" data-theme-color="blue">
+                            <input type="radio" name="theme_color" value="blue" {% if theme_color == 'blue' %}checked{% endif %}>
+                            <span class="nx-theme-swatch" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);"></span>
+                            <span class="nx-theme-name">Blue</span>
+                        </label>
+                        <label class="nx-theme-card {% if theme_color == 'purple' %}selected{% endif %}" data-theme-color="purple">
+                            <input type="radio" name="theme_color" value="purple" {% if theme_color == 'purple' %}checked{% endif %}>
+                            <span class="nx-theme-swatch" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9);"></span>
+                            <span class="nx-theme-name">Purple</span>
+                        </label>
+                        <label class="nx-theme-card {% if theme_color == 'green' %}selected{% endif %}" data-theme-color="green">
+                            <input type="radio" name="theme_color" value="green" {% if theme_color == 'green' %}checked{% endif %}>
+                            <span class="nx-theme-swatch" style="background: linear-gradient(135deg, #10b981, #059669);"></span>
+                            <span class="nx-theme-name">Green</span>
+                        </label>
+                        <label class="nx-theme-card {% if theme_color == 'red' %}selected{% endif %}" data-theme-color="red">
+                            <input type="radio" name="theme_color" value="red" {% if theme_color == 'red' %}checked{% endif %}>
+                            <span class="nx-theme-swatch" style="background: linear-gradient(135deg, #ef4444, #dc2626);"></span>
+                            <span class="nx-theme-name">Red</span>
+                        </label>
+                        <label class="nx-theme-card {% if theme_color == 'custom' %}selected{% endif %}" data-theme-color="custom">
+                            <input type="radio" name="theme_color" value="custom" {% if theme_color == 'custom' %}checked{% endif %}>
+                            <span class="nx-theme-swatch" id="customSwatch" style="background: {{ theme_value }};"></span>
+                            <span class="nx-theme-name">Custom</span>
+                        </label>
+                    </div>
+
+                    <div class="nx-color-picker-row" id="customColorWrapper" {% if theme_color != 'custom' %}style="display: none;"{% endif %}>
+                        <input type="color" id="theme_color_value" name="theme_color_value" value="{{ theme_value }}">
+                        <span class="nx-color-code" id="colorCodeDisplay">{{ theme_value }}</span>
+                    </div>
+
+                    <div class="nx-field" style="margin-top: 24px;">
+                        <label for="preview_layout"><i class="fa-solid fa-desktop"></i> Default Preview Device</label>
+                        <select id="preview_layout" name="preview_layout">
+                            <option value="desktop" {% if user.get('appearance', {}).get('preview_layout', 'desktop') == 'desktop' %}selected{% endif %}>Desktop (1920x1080)</option>
+                            <option value="tablet" {% if user.get('appearance', {}).get('preview_layout') == 'tablet' %}selected{% endif %}>Tablet (768x1024)</option>
+                            <option value="mobile" {% if user.get('appearance', {}).get('preview_layout') == 'mobile' %}selected{% endif %}>Mobile (375x812)</option>
+                        </select>
+                    </div>
+
+                    <div class="nx-form-actions">
+                        <button type="submit" class="nx-btn nx-btn-primary">
+                            <i class="fa-solid fa-paint-roller"></i> Apply Appearance
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Tab 4: Notifications -->
+        <section id="tab-notifications" class="nx-tab-pane">
+            <div class="nx-tab-header">
+                <div>
+                    <h2><i class="fa-solid fa-bell"></i> Notifications</h2>
+                    <p>Choose what alerts and updates you want to receive from Nexus Flow.</p>
+                </div>
+            </div>
+
+            <div class="nx-card">
+                <div class="nx-card-header">
+                    <h3><i class="fa-solid fa-envelope-open-text"></i> Notification Preferences</h3>
+                </div>
+                {% set notif = user.get('notifications', {}) %}
+                <form id="notificationsForm" method="POST" action="{{ url_for('settings') }}">
+                    <input type="hidden" name="action" value="notifications">
+
+                    <div class="nx-switch-item">
+                        <div class="nx-switch-info">
+                            <div class="nx-switch-icon"><i class="fa-solid fa-robot"></i></div>
+                            <div>
+                                <h4>AI Generation Completed</h4>
+                                <p>Get notified when your website is ready</p>
+                            </div>
+                        </div>
+                        <label class="nx-toggle">
+                            <input type="checkbox" name="email_alerts" {% if notif.get('email_alerts', True) %}checked{% endif %}>
+                            <span class="nx-toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="nx-switch-item">
+                        <div class="nx-switch-info">
+                            <div class="nx-switch-icon"><i class="fa-solid fa-diagram-project"></i></div>
+                            <div>
+                                <h4>Website Build Updates</h4>
+                                <p>Progress updates during website generation</p>
+                            </div>
+                        </div>
+                        <label class="nx-toggle">
+                            <input type="checkbox" name="project_updates" {% if notif.get('project_updates', True) %}checked{% endif %}>
+                            <span class="nx-toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="nx-switch-item">
+                        <div class="nx-switch-info">
+                            <div class="nx-switch-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                            <div>
+                                <h4>Security Alerts</h4>
+                                <p>Important security notifications for your account</p>
+                            </div>
+                        </div>
+                        <label class="nx-toggle">
+                            <input type="checkbox" name="ai_updates" {% if notif.get('ai_updates', False) %}checked{% endif %}>
+                            <span class="nx-toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="nx-switch-item">
+                        <div class="nx-switch-info">
+                            <div class="nx-switch-icon"><i class="fa-solid fa-sparkles"></i></div>
+                            <div>
+                                <h4>New Feature Notifications</h4>
+                                <p>Be first to hear about new AI features and updates</p>
+                            </div>
+                        </div>
+                        <label class="nx-toggle">
+                            <input type="checkbox" name="feature_updates" {% if notif.get('feature_updates', True) %}checked{% endif %}>
+                            <span class="nx-toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="nx-form-actions">
+                        <button type="submit" class="nx-btn nx-btn-primary">
+                            <i class="fa-solid fa-floppy-disk"></i> Save Notifications
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Tab 5: AI Preferences -->
+        <section id="tab-ai" class="nx-tab-pane">
+            <div class="nx-tab-header">
+                <div>
+                    <h2><i class="fa-solid fa-wand-magic-sparkles"></i> AI Preferences</h2>
+                    <p>Configure how AI generates website code, styles, and layouts.</p>
+                </div>
+            </div>
+
+            <div class="nx-card">
+                <div class="nx-card-header">
+                    <h3><i class="fa-solid fa-microchip"></i> AI Model Selection</h3>
+                </div>
+                {% set ai_pref = user.get('ai_preferences', {}) %}
+                <form id="aiPreferencesForm" method="POST" action="{{ url_for('settings') }}">
+                    <input type="hidden" name="action" value="ai_preferences">
+
+                    <div class="nx-model-selector">
+                        <label class="nx-model-option {% if ai_pref.get('default_model', primary_model) == primary_model %}selected{% endif %}">
+                            <input type="radio" name="default_model" value="{{ primary_model }}" {% if ai_pref.get('default_model', primary_model) == primary_model %}checked{% endif %}>
+                            <div class="nx-model-card">
+                                <div class="nx-model-icon nx-model-gemini"><i class="fa-solid fa-gem"></i></div>
+                                <div class="nx-model-info">
+                                    <span class="nx-model-name">Gemini 2.5 Flash</span>
+                                    <span class="nx-model-desc">Fast &amp; intelligent</span>
+                                </div>
+                                <span class="nx-model-badge">Primary</span>
+                            </div>
+                        </label>
+                        {% for model in fallback_models %}
+                        <label class="nx-model-option {% if ai_pref.get('default_model') == model %}selected{% endif %}">
+                            <input type="radio" name="default_model" value="{{ model }}" {% if ai_pref.get('default_model') == model %}checked{% endif %}>
+                            <div class="nx-model-card">
+                                <div class="nx-model-icon nx-model-fallback"><i class="fa-solid fa-bolt"></i></div>
+                                <div class="nx-model-info">
+                                    <span class="nx-model-name">{{ model }}</span>
+                                    <span class="nx-model-desc">Fallback model</span>
+                                </div>
+                            </div>
+                        </label>
+                        {% endfor %}
+                    </div>
+
+                    <div class="nx-form-grid">
+                        <div class="nx-field">
+                            <label for="code_style"><i class="fa-solid fa-code"></i> Website Generation Style</label>
+                            <select id="code_style" name="code_style">
+                                <option value="modern" {% if ai_pref.get('code_style', 'modern') == 'modern' %}selected{% endif %}>Modern Dark</option>
+                                <option value="minimal" {% if ai_pref.get('code_style') == 'minimal' %}selected{% endif %}>Minimal Clean</option>
+                                <option value="vibrant" {% if ai_pref.get('code_style') == 'vibrant' %}selected{% endif %}>Vibrant Creative</option>
+                                <option value="enterprise" {% if ai_pref.get('code_style') == 'enterprise' %}selected{% endif %}>Enterprise Professional</option>
+                            </select>
+                        </div>
+                        <div class="nx-field">
+                            <label for="creativity"><i class="fa-solid fa-sliders"></i> Response Style</label>
+                            <select id="creativity" name="creativity">
+                                <option value="precise" {% if ai_pref.get('creativity') == 'precise' %}selected{% endif %}>Professional</option>
+                                <option value="balanced" {% if ai_pref.get('creativity', 'balanced') == 'balanced' %}selected{% endif %}>Friendly</option>
+                                <option value="creative" {% if ai_pref.get('creativity') == 'creative' %}selected{% endif %}>Technical</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="nx-field">
+                        <label for="coding_level"><i class="fa-solid fa-code"></i> Coding Assistance Level</label>
+                        <div class="nx-level-selector">
+                            <label class="nx-level-option {% if ai_pref.get('coding_level', 'intermediate') == 'beginner' %}selected{% endif %}">
+                                <input type="radio" name="coding_level" value="beginner" {% if ai_pref.get('coding_level') == 'beginner' %}checked{% endif %}>
+                                <span class="nx-level-label">Beginner</span>
+                            </label>
+                            <label class="nx-level-option {% if ai_pref.get('coding_level', 'intermediate') == 'intermediate' %}selected{% endif %}">
+                                <input type="radio" name="coding_level" value="intermediate" {% if ai_pref.get('coding_level', 'intermediate') == 'intermediate' %}checked{% endif %}>
+                                <span class="nx-level-label">Intermediate</span>
+                            </label>
+                            <label class="nx-level-option {% if ai_pref.get('coding_level') == 'advanced' %}selected{% endif %}">
+                                <input type="radio" name="coding_level" value="advanced" {% if ai_pref.get('coding_level') == 'advanced' %}checked{% endif %}>
+                                <span class="nx-level-label">Advanced</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="nx-form-actions">
+                        <button type="submit" class="nx-btn nx-btn-primary">
+                            <i class="fa-solid fa-floppy-disk"></i> Save AI Preferences
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Tab 6: AI Provider Settings -->
+        <section id="tab-providers" class="nx-tab-pane">
+            <div class="nx-tab-header">
+                <div>
+                    <h2><i class="fa-solid fa-server"></i> AI Provider Settings</h2>
+                    <p>Manage your AI providers, API keys, and connection settings.</p>
+                </div>
+            </div>
+
+            <!-- Gemini Provider Card -->
+            <div class="nx-card nx-provider-card">
+                <div class="nx-provider-header">
+                    <div class="nx-provider-icon nx-provider-gemini">
+                        <i class="fa-solid fa-gem"></i>
+                    </div>
+                    <div class="nx-provider-info">
+                        <h3>Gemini AI</h3>
+                        <p>Google's advanced AI model for code generation</p>
+                    </div>
+                    <div class="nx-provider-status" id="geminiStatus">
+                        <span class="nx-status-dot nx-status-active"></span>
+                        <span>Connected</span>
+                    </div>
+                </div>
+                <div class="nx-provider-body">
+                    <div class="nx-provider-detail">
+                        <span class="nx-detail-label">Model</span>
+                        <span class="nx-detail-value" id="geminiModel">gemini-3.6-flash</span>
+                    </div>
+                    <div class="nx-provider-detail">
+                        <span class="nx-detail-label">API Key</span>
+                        <span class="nx-detail-value nx-masked">****configured****</span>
+                    </div>
+                    <div class="nx-provider-actions">
+                        <button type="button" class="nx-btn nx-btn-outline nx-btn-sm" onclick="testProvider('gemini')">
+                            <i class="fa-solid fa-plug"></i> Test Connection
+                        </button>
+                        <button type="button" class="nx-btn nx-btn-ghost nx-btn-sm" onclick="configureProvider('gemini')">
+                            <i class="fa-solid fa-gear"></i> Configure
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- OpenRouter Provider Card -->
+            <div class="nx-card nx-provider-card">
+                <div class="nx-provider-header">
+                    <div class="nx-provider-icon nx-provider-openrouter">
+                        <i class="fa-solid fa-route"></i>
+                    </div>
+                    <div class="nx-provider-info">
+                        <h3>OpenRouter</h3>
+                        <p>Access multiple AI models through OpenRouter</p>
+                    </div>
+                    <div class="nx-provider-status" id="openrouterStatus">
+                        <span class="nx-status-dot nx-status-standby"></span>
+                        <span>Standby</span>
+                    </div>
+                </div>
+                <div class="nx-provider-body">
+                    <div class="nx-provider-detail">
+                        <span class="nx-detail-label">Model</span>
+                        <span class="nx-detail-value" id="openrouterModel">z-ai/glm-5.3</span>
+                    </div>
+                    <div class="nx-provider-detail">
+                        <span class="nx-detail-label">API Key</span>
+                        <span class="nx-detail-value nx-masked">****configured****</span>
+                    </div>
+                    <div class="nx-provider-actions">
+                        <button type="button" class="nx-btn nx-btn-outline nx-btn-sm" onclick="testProvider('openrouter')">
+                            <i class="fa-solid fa-plug"></i> Test Connection
+                        </button>
+                        <button type="button" class="nx-btn nx-btn-ghost nx-btn-sm" onclick="configureProvider('openrouter')">
+                            <i class="fa-solid fa-gear"></i> Configure
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Groq Provider Card -->
+            <div class="nx-card nx-provider-card">
+                <div class="nx-provider-header">
+                    <div class="nx-provider-icon nx-provider-groq">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+                    <div class="nx-provider-info">
+                        <h3>Groq</h3>
+                        <p>Fast inference with Groq's optimized infrastructure</p>
+                    </div>
+                    <div class="nx-provider-status" id="groqStatus">
+                        <span class="nx-status-dot nx-status-inactive"></span>
+                        <span>Inactive</span>
+                    </div>
+                </div>
+                <div class="nx-provider-body">
+                    <div class="nx-provider-detail">
+                        <span class="nx-detail-label">Model</span>
+                        <span class="nx-detail-value" id="groqModel">llama-3.3-70b-versatile</span>
+                    </div>
+                    <div class="nx-provider-detail">
+                        <span class="nx-detail-label">API Key</span>
+                        <span class="nx-detail-value nx-masked">****not configured****</span>
+                    </div>
+                    <div class="nx-provider-actions">
+                        <button type="button" class="nx-btn nx-btn-outline nx-btn-sm" onclick="testProvider('groq')">
+                            <i class="fa-solid fa-plug"></i> Test Connection
+                        </button>
+                        <button type="button" class="nx-btn nx-btn-ghost nx-btn-sm" onclick="configureProvider('groq')">
+                            <i class="fa-solid fa-gear"></i> Configure
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tab 7: AI Workspace Statistics -->
+        <section id="tab-stats" class="nx-tab-pane">
+            <div class="nx-tab-header">
+                <div>
+                    <h2><i class="fa-solid fa-chart-line"></i> AI Workspace Statistics</h2>
+                    <p>Track your usage and activity across the Nexus Flow platform.</p>
+                </div>
+            </div>
+
+            <div class="nx-stats-grid">
+                <div class="nx-stat-card">
+                    <div class="nx-stat-icon nx-stat-blue"><i class="fa-solid fa-globe"></i></div>
+                    <div class="nx-stat-content">
+                        <span class="nx-stat-value" id="statWebsites">--</span>
+                        <span class="nx-stat-label">Websites Generated</span>
+                    </div>
+                </div>
+                <div class="nx-stat-card">
+                    <div class="nx-stat-icon nx-stat-purple"><i class="fa-solid fa-folder-open"></i></div>
+                    <div class="nx-stat-content">
+                        <span class="nx-stat-value" id="statProjects">--</span>
+                        <span class="nx-stat-label">Projects Created</span>
+                    </div>
+                </div>
+                <div class="nx-stat-card">
+                    <div class="nx-stat-icon nx-stat-green"><i class="fa-solid fa-robot"></i></div>
+                    <div class="nx-stat-content">
+                        <span class="nx-stat-value" id="statRequests">--</span>
+                        <span class="nx-stat-label">AI Requests</span>
+                    </div>
+                </div>
+                <div class="nx-stat-card">
+                    <div class="nx-stat-icon nx-stat-orange"><i class="fa-solid fa-clock"></i></div>
+                    <div class="nx-stat-content">
+                        <span class="nx-stat-value" id="statLastActivity">--</span>
+                        <span class="nx-stat-label">Last Activity</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tab 8: Integrations -->
+        <section id="tab-integrations" class="nx-tab-pane">
+            <div class="nx-tab-header">
+                <div>
+                    <h2><i class="fa-solid fa-plug"></i> Integrations</h2>
+                    <p>Connect external services and APIs to enhance your workflow.</p>
+                </div>
+            </div>
+
+            <div class="nx-integrations-grid">
+                <div class="nx-integration-card">
+                    <div class="nx-integration-icon nx-integration-gemini"><i class="fa-solid fa-gem"></i></div>
+                    <div class="nx-integration-info">
+                        <h4>Gemini API</h4>
+                        <p>Google AI for code generation</p>
+                    </div>
+                    <span class="nx-badge nx-badge-active"><i class="fa-solid fa-check"></i> Connected</span>
+                </div>
+                <div class="nx-integration-card">
+                    <div class="nx-integration-icon nx-integration-openrouter"><i class="fa-solid fa-route"></i></div>
+                    <div class="nx-integration-info">
+                        <h4>OpenRouter API</h4>
+                        <p>Multi-model AI access</p>
+                    </div>
+                    <span class="nx-badge nx-badge-standby"><i class="fa-solid fa-circle"></i> Standby</span>
+                </div>
+                <div class="nx-integration-card">
+                    <div class="nx-integration-icon nx-integration-github"><i class="fa-brands fa-github"></i></div>
+                    <div class="nx-integration-info">
+                        <h4>GitHub</h4>
+                        <p>Version control &amp; deployment</p>
+                    </div>
+                    <button type="button" class="nx-btn nx-btn-outline nx-btn-sm">Configure</button>
+                </div>
+                <div class="nx-integration-card">
+                    <div class="nx-integration-icon nx-integration-mongodb"><i class="fa-solid fa-database"></i></div>
+                    <div class="nx-integration-info">
+                        <h4>MongoDB Atlas</h4>
+                        <p>Cloud database storage</p>
+                    </div>
+                    <span class="nx-badge nx-badge-active"><i class="fa-solid fa-check"></i> Connected</span>
+                </div>
+                <div class="nx-integration-card" id="figmaIntegrationCard">
+                    <div class="nx-integration-icon nx-integration-figma"><i class="fa-brands fa-figma"></i></div>
+                    <div class="nx-integration-info">
+                        <h4>Figma</h4>
+                        <p>Import designs &amp; generate websites</p>
+                    </div>
+                    <div id="figmaStatusBadge">
+                        <button type="button" class="nx-btn nx-btn-outline nx-btn-sm" id="figmaConnectBtn" onclick="connectFigma()">
+                            <i class="fa-brands fa-figma"></i> Connect Figma
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Figma Connection Detail -->
+            <div id="figmaConnectionDetail" class="nx-card" style="display:none; margin-top: 1.5rem;">
+                <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1rem;">
+                    <div class="nx-integration-icon nx-integration-figma" style="width:48px;height:48px;font-size:1.5rem;">
+                        <i class="fa-brands fa-figma"></i>
+                    </div>
+                    <div>
+                        <h3 style="margin:0;">Figma Connection</h3>
+                        <p id="figmaAccountInfo" style="margin:0; color:var(--nx-text-secondary); font-size:0.85rem;"></p>
+                    </div>
+                </div>
+                <div style="display:flex; gap:0.75rem;">
+                    <button type="button" class="nx-btn nx-btn-primary nx-btn-sm" onclick="importFigmaFromSettings()">
+                        <i class="fa-solid fa-file-import"></i> Import Design
+                    </button>
+                    <button type="button" class="nx-btn nx-btn-danger-outline nx-btn-sm" onclick="disconnectFigma()">
+                        <i class="fa-solid fa-link-slash"></i> Disconnect
+                    </button>
+                </div>
+            </div>
+
+            <script>
+            (function() {
+                fetch('/api/figma/status').then(function(r){return r.json()}).then(function(d){
+                    if (d.success && d.connected) {
+                        document.getElementById('figmaStatusBadge').innerHTML =
+                            '<span class="nx-badge nx-badge-active"><i class="fa-solid fa-check"></i> Connected</span>';
+                        var detail = document.getElementById('figmaConnectionDetail');
+                        detail.style.display = 'block';
+                        document.getElementById('figmaAccountInfo').textContent =
+                            'Account: ' + (d.username || d.email || 'Connected');
+                    } else if (d.success && !d.configured) {
+                        document.getElementById('figmaStatusBadge').innerHTML =
+                            '<span class="nx-badge nx-badge-standby" title="Set FIGMA_CLIENT_ID in .env"><i class="fa-solid fa-circle"></i> Not Configured</span>';
+                    }
+                    // Check URL params for callback result
+                    var params = new URLSearchParams(window.location.search);
+                    if (params.get('figma_success') === 'connected') {
+                        showToast('Figma connected successfully!');
+                        setTimeout(function(){ location.reload(); }, 500);
+                    }
+                    if (params.get('figma_error')) {
+                        showToast('Figma connection failed: ' + params.get('figma_error'), true);
+                    }
+                });
+
+                window.connectFigma = function() {
+                    window.location.href = '/api/figma/connect';
+                };
+                window.disconnectFigma = function() {
+                    fetch('/api/figma/disconnect', {method:'POST'}).then(function(){
+                        showToast('Figma disconnected');
+                        setTimeout(function(){ location.reload(); }, 500);
+                    });
+                };
+                window.importFigmaFromSettings = function() {
+                    var url = prompt('Paste your Figma file URL:');
+                    if (!url) return;
+                    showToast('Importing Figma design...');
+                    fetch('/api/figma/import', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({url: url})
+                    }).then(function(r){return r.json()}).then(function(d){
+                        if (d.success) {
+                            showToast('Design analyzed: ' + d.file_name);
+                        } else {
+                            showToast(d.message || d.error || 'Import failed', true);
+                        }
+                    }).catch(function(e){ showToast('Import failed: ' + e.message, true); });
+                };
+            })();
+            </script>
+        </section>
+
+        <!-- Tab 9: Danger Zone -->
+        <section id="tab-danger" class="nx-tab-pane">
+            <div class="nx-tab-header">
+                <div>
+                    <h2 class="nx-text-danger"><i class="fa-solid fa-triangle-exclamation"></i> Danger Zone</h2>
+                    <p>Irreversible account management actions. Proceed with extreme caution.</p>
+                </div>
+            </div>
+
+            <div class="nx-card nx-card-danger">
+                <div class="nx-danger-row">
+                    <div class="nx-danger-info">
+                        <h3><i class="fa-solid fa-trash-can"></i> Delete Account</h3>
+                        <p>Permanently delete your account, all saved projects, profile data, and database records. This action cannot be undone.</p>
+                    </div>
+                    <button type="button" id="openDeleteModalBtn" class="nx-btn nx-btn-danger">
+                        <i class="fa-solid fa-trash-can"></i> Delete Account
+                    </button>
+                </div>
+            </div>
+
+            <div class="nx-card nx-card-danger">
+                <div class="nx-danger-row">
+                    <div class="nx-danger-info">
+                        <h3><i class="fa-solid fa-broom"></i> Clear Workspace Data</h3>
+                        <p>Clear all generated websites, project files, and AI conversation history. Your account will remain active.</p>
+                    </div>
+                    <button type="button" class="nx-btn nx-btn-danger-outline">
+                        <i class="fa-solid fa-broom"></i> Clear Data
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<!-- Sticky Bottom Action Bar -->
+<div class="nx-action-bar">
+    <div class="nx-action-bar-inner">
+        <span class="nx-action-hint">Changes are saved when you click Save</span>
+        <div class="nx-action-buttons">
+            <button type="button" class="nx-btn nx-btn-ghost" id="resetSettingsBtn">
+                <i class="fa-solid fa-rotate-left"></i> Reset
+            </button>
+            <button type="button" class="nx-btn nx-btn-primary" id="saveAllSettingsBtn">
+                <i class="fa-solid fa-floppy-disk"></i> Save Changes
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Confirm Account Deletion Modal -->
+<div id="deleteAccountModal" class="nx-modal-overlay hidden">
+    <div class="nx-modal-card">
+        <div class="nx-modal-header">
+            <h3><i class="fa-solid fa-circle-exclamation"></i> Delete Account Confirmation</h3>
+            <button type="button" class="nx-modal-close" data-close-modal="deleteAccountModal">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <p class="nx-modal-desc">
+            Are you sure you want to delete your Nexus Flow account? This will permanently remove your user profile and database records.
+        </p>
+        <form id="deleteAccountForm" method="POST" action="{{ url_for('delete_account') }}">
+            <div class="nx-field">
+                <label for="deleteConfirmPassword"><i class="fa-solid fa-lock"></i> Enter your password to confirm:</label>
+                <input type="password" id="deleteConfirmPassword" name="password" placeholder="Your current password" required>
+            </div>
+            <div class="nx-modal-footer">
+                <button type="button" class="nx-btn nx-btn-ghost" data-close-modal="deleteAccountModal">Cancel</button>
+                <button type="submit" class="nx-btn nx-btn-danger">
+                    <i class="fa-solid fa-trash-can"></i> Confirm Delete
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
